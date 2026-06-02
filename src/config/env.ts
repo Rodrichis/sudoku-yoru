@@ -1,0 +1,56 @@
+const envInterno = {
+  EXPO_PUBLIC_APP_BASE_URL: process.env.EXPO_PUBLIC_APP_BASE_URL ?? "http://localhost:8081",
+  EXPO_PUBLIC_APP_NAME: process.env.EXPO_PUBLIC_APP_NAME ?? "RZ Base App",
+  EXPO_PUBLIC_APP_SCHEME: process.env.EXPO_PUBLIC_APP_SCHEME ?? "rzbaseapp",
+  EXPO_PUBLIC_DEFAULT_TRIAL_DAYS: process.env.EXPO_PUBLIC_DEFAULT_TRIAL_DAYS ?? "14",
+  EXPO_PUBLIC_EAS_PROJECT_ID: process.env.EXPO_PUBLIC_EAS_PROJECT_ID ?? "",
+  EXPO_PUBLIC_FIREBASE_API_KEY: process.env.EXPO_PUBLIC_FIREBASE_API_KEY ?? "",
+  EXPO_PUBLIC_FIREBASE_APP_ID: process.env.EXPO_PUBLIC_FIREBASE_APP_ID ?? "",
+  EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN ?? "",
+  EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID ?? "",
+  EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID:
+    process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID ?? "",
+  EXPO_PUBLIC_FIREBASE_PROJECT_ID: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID ?? "",
+  EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET ?? "",
+  EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID:
+    process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID ?? "",
+  EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID ?? "",
+  EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID ?? "",
+  EXPO_PUBLIC_MERCADO_PAGO_PUBLIC_KEY:
+    process.env.EXPO_PUBLIC_MERCADO_PAGO_PUBLIC_KEY ?? "",
+  EXPO_PUBLIC_REVENUECAT_API_KEY_ANDROID:
+    process.env.EXPO_PUBLIC_REVENUECAT_API_KEY_ANDROID ?? "",
+  EXPO_PUBLIC_REVENUECAT_API_KEY_IOS:
+    process.env.EXPO_PUBLIC_REVENUECAT_API_KEY_IOS ?? "",
+} as const;
+
+const clavesFirebase = [
+  envInterno.EXPO_PUBLIC_FIREBASE_API_KEY,
+  envInterno.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  envInterno.EXPO_PUBLIC_FIREBASE_PROJECT_ID,
+  envInterno.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  envInterno.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  envInterno.EXPO_PUBLIC_FIREBASE_APP_ID,
+];
+
+export const env = envInterno;
+
+export const firebaseConfigurado = clavesFirebase.every((valor) => valor.trim().length > 0);
+
+export const easPushConfigurado = envInterno.EXPO_PUBLIC_EAS_PROJECT_ID.trim().length > 0;
+
+export const googleLoginWebConfigurado =
+  envInterno.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID.trim().length > 0;
+
+export const googleLoginNativoConfigurado =
+  envInterno.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID.trim().length > 0 ||
+  envInterno.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID.trim().length > 0;
+
+export const revenueCatConfigurado =
+  envInterno.EXPO_PUBLIC_REVENUECAT_API_KEY_ANDROID.trim().length > 0 ||
+  envInterno.EXPO_PUBLIC_REVENUECAT_API_KEY_IOS.trim().length > 0;
+
+export const trialDiasPredeterminados = Number.parseInt(
+  envInterno.EXPO_PUBLIC_DEFAULT_TRIAL_DAYS,
+  10
+);
