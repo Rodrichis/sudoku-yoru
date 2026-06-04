@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import type { TextStyle, ViewStyle } from "react-native";
 
 import { branding } from "@/src/config/branding";
+import { useTema } from "@/src/hooks/use-tema";
 
 type VarianteBoton = "primario" | "secundario" | "ghost";
 
@@ -15,37 +16,43 @@ interface BotonProps {
   variante?: VarianteBoton;
 }
 
-const estilosVariante: Record<VarianteBoton, ViewStyle> = {
-  ghost: {
-    backgroundColor: branding.colores.superficie,
-    borderColor: branding.colores.bordeFuerte,
-    borderWidth: 1,
-  },
-  primario: {
+function obtenerEstilosVariante(variante: VarianteBoton): ViewStyle {
+  if (variante === "ghost") {
+    return {
+      backgroundColor: branding.colores.fondoElevado,
+      borderColor: branding.colores.bordeSuave,
+      borderWidth: 1,
+    };
+  }
+
+  if (variante === "secundario") {
+    return {
+      backgroundColor: branding.colores.secundario,
+    };
+  }
+
+  return {
     backgroundColor: branding.colores.primario,
-  },
-  secundario: {
-    backgroundColor: branding.colores.secundario,
-  },
-};
+  };
+}
 
-const estilosTexto: Record<VarianteBoton, TextStyle> = {
-  ghost: {
-    color: branding.colores.textoPrimario,
-  },
-  primario: {
-    color: branding.colores.textoInvertido,
-  },
-  secundario: {
-    color: branding.colores.textoInvertido,
-  },
-};
+function obtenerTextoVariante(variante: VarianteBoton): TextStyle {
+  if (variante === "ghost") {
+    return {
+      color: branding.colores.textoPrimario,
+      fontFamily: branding.tipografia.cuerpoSemi,
+    };
+  }
 
-const coloresIndicador: Record<VarianteBoton, string> = {
-  ghost: branding.colores.textoPrimario,
-  primario: branding.colores.textoInvertido,
-  secundario: branding.colores.textoInvertido,
-};
+  return {
+    color: branding.colores.textoInvertido,
+    fontFamily: branding.tipografia.cuerpoSemi,
+  };
+}
+
+function obtenerColorIndicador(variante: VarianteBoton) {
+  return variante === "ghost" ? branding.colores.textoPrimario : branding.colores.textoInvertido;
+}
 
 export function Boton({
   cargando = false,
@@ -55,22 +62,36 @@ export function Boton({
   onPress,
   variante = "primario",
 }: BotonProps) {
+  useTema();
+
   return (
     <Pressable
-      className="min-h-14 flex-row items-center justify-center px-4"
       disabled={deshabilitado || cargando}
       onPress={onPress}
       style={[
         {
-          borderRadius: branding.layout.radioControl,
+          alignItems: "center",
+          borderRadius: 999,
+          flexDirection: "row",
+          justifyContent: "center",
+          marginBottom: 16,
+          minHeight: 54,
+          paddingHorizontal: 20,
         },
-        estilosVariante[variante],
+        obtenerEstilosVariante(variante),
         deshabilitado || cargando ? { opacity: 0.6 } : null,
       ]}
     >
-      <View className="flex-row items-center gap-2">
-        {cargando ? <ActivityIndicator color={coloresIndicador[variante]} /> : icono}
-        <Text className="text-base font-bold" style={estilosTexto[variante]}>
+      <View style={{ alignItems: "center", flexDirection: "row" }}>
+        {cargando ? <ActivityIndicator color={obtenerColorIndicador(variante)} /> : icono}
+        <Text
+          style={{
+            ...obtenerTextoVariante(variante),
+            fontSize: 14,
+            letterSpacing: 1.8,
+            marginLeft: icono || cargando ? 8 : 0,
+          }}
+        >
           {etiqueta}
         </Text>
       </View>

@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
-import { Pressable, Text } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { useState } from "react";
 
 import { Boton } from "@/src/components/ui/boton";
@@ -16,14 +16,43 @@ import {
   iniciarSesionSchema,
 } from "@/src/features/auth/esquemas";
 import { useGoogleAuth } from "@/src/hooks/use-google-auth";
+import { useSesion } from "@/src/hooks/use-sesion";
 import { useTextos } from "@/src/hooks/use-textos";
-import { iniciarSesionEmail } from "@/src/services/auth";
+import { googleLoginDisponible, iniciarSesionEmail } from "@/src/services/auth";
+
+function GoogleAuthAction() {
+  const textos = useTextos();
+  const google = useGoogleAuth();
+
+  return (
+    <>
+      {google.error ? (
+        <Text
+          className="text-sm"
+          style={{ color: branding.colores.error, fontFamily: branding.tipografia.cuerpoMedio }}
+        >
+          {google.error}
+        </Text>
+      ) : null}
+
+      <Boton
+        cargando={google.cargando}
+        deshabilitado={!firebaseConfigurado}
+        etiqueta={google.cargando ? textos.general.loadingGoogle : textos.auth.sesion.google}
+        icono={<Ionicons color={branding.colores.primario} name="logo-google" size={20} />}
+        onPress={google.iniciar}
+        variante="ghost"
+      />
+    </>
+  );
+}
 
 export default function SignInScreen() {
   const textos = useTextos();
-  const google = useGoogleAuth();
+  const { entrarComoInvitado } = useSesion();
   const [mostrarPassword, setMostrarPassword] = useState(false);
   const [errorGeneral, setErrorGeneral] = useState<string | null>(null);
+  const mostrarGoogle = googleLoginDisponible();
   const {
     control,
     handleSubmit,
@@ -64,7 +93,7 @@ export default function SignInScreen() {
               autoCorrect={false}
               error={errors.email?.message}
               keyboardType="email-address"
-              label="Email"
+              label="Correo"
               onBlur={onBlur}
               onChangeText={onChange}
               placeholder="tu@correo.com"
@@ -82,13 +111,19 @@ export default function SignInScreen() {
               autoCapitalize="none"
               autoCorrect={false}
               error={errors.password?.message}
-              label="Password"
+              label="Clave"
               onBlur={onBlur}
               onChangeText={onChange}
-              placeholder="Tu password"
+              placeholder="Tu clave"
               rightAccessory={
                 <Pressable onPress={() => setMostrarPassword((actual) => !actual)}>
-                  <Text className="text-sm font-semibold" style={{ color: branding.colores.textoSuave }}>
+                  <Text
+                    className="text-sm"
+                    style={{
+                      color: branding.colores.textoSuave,
+                      fontFamily: branding.tipografia.cuerpoSemi,
+                    }}
+                  >
                     {mostrarPassword ? "Ocultar" : "Ver"}
                   </Text>
                 </Pressable>
@@ -101,14 +136,11 @@ export default function SignInScreen() {
         />
 
         {errorGeneral ? (
-          <Text className="text-sm font-medium" style={{ color: branding.colores.error }}>
+          <Text
+            className="text-sm"
+            style={{ color: branding.colores.error, fontFamily: branding.tipografia.cuerpoMedio }}
+          >
             {errorGeneral}
-          </Text>
-        ) : null}
-
-        {google.error ? (
-          <Text className="text-sm font-medium" style={{ color: branding.colores.error }}>
-            {google.error}
           </Text>
         ) : null}
 
@@ -120,46 +152,56 @@ export default function SignInScreen() {
           onPress={onSubmit}
         />
 
-        {google.disponible ? (
-          <Boton
-            cargando={google.cargando}
-            deshabilitado={!firebaseConfigurado}
-            etiqueta={google.cargando ? textos.general.loadingGoogle : textos.auth.sesion.google}
-            icono={<Ionicons color={branding.colores.textoInvertido} name="logo-google" size={20} />}
-            onPress={google.iniciar}
-            variante="secundario"
-          />
-        ) : null}
+        {mostrarGoogle ? <GoogleAuthAction /> : null}
 
-        <Link href="/(public)/forgot-password" asChild>
-          <Pressable>
-            <Text
-              className="text-center text-sm font-semibold"
-              style={{ color: branding.colores.textoSecundario }}
-            >
-              {textos.auth.sesion.recuperar}
-            </Text>
-          </Pressable>
-        </Link>
+        <Boton
+          etiqueta={textos.auth.sesion.invitado}
+          icono={<Ionicons color={branding.colores.textoPrimario} name="moon-outline" size={20} />}
+          onPress={() => {
+            void entrarComoInvitado();
+          }}
+          variante="ghost"
+        />
 
-        <Link href="/(public)/sign-up" asChild>
-          <Pressable
-            className="px-4 py-4"
+        <View className="flex-row items-center justify-center pt-1">
+          <Link href="/(public)/forgot-password" asChild>
+            <Pressable style={{ marginRight: 16 }}>
+              <Text
+                style={{
+                  color: branding.colores.textoSecundario,
+                  fontFamily: branding.tipografia.cuerpoSemi,
+                  fontSize: 13,
+                }}
+              >
+                {textos.auth.sesion.recuperar}
+              </Text>
+            </Pressable>
+          </Link>
+
+          <Text
             style={{
-              backgroundColor: branding.colores.superficie,
-              borderColor: branding.colores.bordeSuave,
-              borderRadius: branding.layout.radioControl,
-              borderWidth: 1,
+              color: branding.colores.textoSuave,
+              fontFamily: branding.tipografia.cuerpo,
+              fontSize: 13,
             }}
           >
-            <Text
-              className="text-center text-base font-bold"
-              style={{ color: branding.colores.textoPrimario }}
-            >
-              {textos.auth.sesion.registro}
-            </Text>
-          </Pressable>
-        </Link>
+            /
+          </Text>
+
+          <Link href="/(public)/sign-up" asChild>
+            <Pressable style={{ marginLeft: 16 }}>
+              <Text
+                style={{
+                  color: branding.colores.textoPrimario,
+                  fontFamily: branding.tipografia.cuerpoSemi,
+                  fontSize: 13,
+                }}
+              >
+                {textos.auth.sesion.registro}
+              </Text>
+            </Pressable>
+          </Link>
+        </View>
       </TarjetaAuth>
     </Pantalla>
   );

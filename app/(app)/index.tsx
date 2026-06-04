@@ -1,193 +1,161 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Text, View } from "react-native";
+import { useRouter } from "expo-router";
+import { Pressable, Text, View } from "react-native";
 
-import { Boton } from "@/src/components/ui/boton";
-import { FichaResumen } from "@/src/components/ui/ficha-resumen";
-import { Pantalla } from "@/src/components/ui/pantalla";
+import { SudokuPage } from "@/src/components/sudoku/sudoku-page";
+import { PantallaCarga } from "@/src/components/ui/pantalla-carga";
+import { SUDOKU_DIFICULTADES } from "@/src/constants/sudoku";
 import { branding } from "@/src/config/branding";
-import { firebaseConfigurado } from "@/src/config/env";
 import { useSesion } from "@/src/hooks/use-sesion";
+import { useSudokuResumen } from "@/src/hooks/use-sudoku-resumen";
 import { useTextos } from "@/src/hooks/use-textos";
-import { useNotificaciones } from "@/src/providers/notificaciones-provider";
-import { cerrarSesion, googleLoginDisponible } from "@/src/services/auth";
-import { isRevenueCatDisponible } from "@/src/services/revenuecat";
-import {
-  obtenerNombreEstado,
-  obtenerNombrePlan,
-  suscripcionExpirada,
-} from "@/src/services/suscripciones";
-import { formatearFecha } from "@/src/utils/fechas";
+import { formatearDuracion } from "@/src/utils/sudoku";
 
 export default function HomeScreen() {
+  const router = useRouter();
   const textos = useTextos();
-  const { idioma, usuarioApp, usuarioFirebase } = useSesion();
-  const { error, expoPushToken, permiso, registrando, ultimaNotificacion } = useNotificaciones();
+  const { perfilId } = useSesion();
+  const { cargando: cargandoResumen, resumen } = useSudokuResumen(perfilId);
 
-  const tituloUsuario =
-    usuarioApp?.nombre || usuarioFirebase?.displayName || usuarioFirebase?.email || branding.app.nombre;
+  if (cargandoResumen) {
+    return <PantallaCarga texto={textos.general.cargando} />;
+  }
 
-  const estiloPanel = {
-    backgroundColor: branding.colores.superficie,
-    borderColor: branding.colores.bordeSuave,
-    borderRadius: branding.layout.radioPanel,
-    borderWidth: 1,
-  } as const;
+  const puedeContinuar = resumen.existe && !resumen.finalizada;
 
   return (
-    <Pantalla
-      cabecera={
-        <View className="mb-2">
-          <Text
-            className="text-sm font-semibold uppercase tracking-[1.8px]"
-            style={{ color: branding.colores.acento }}
-          >
-            {branding.app.nombre}
-          </Text>
-          <Text className="mt-2 text-4xl font-black" style={{ color: branding.colores.textoPrimario }}>
-            {textos.home.titulo}
-          </Text>
-          <Text
-            className="mt-3 max-w-2xl text-base leading-6"
-            style={{ color: branding.colores.textoSecundario }}
-          >
-            {textos.home.resumen}
-          </Text>
-        </View>
-      }
-    >
-      <View className="gap-4">
-        <View className="px-6 py-6 shadow-tarjeta" style={estiloPanel}>
-          <Text
-            className="text-sm font-semibold uppercase tracking-[1.6px]"
-            style={{ color: branding.colores.textoSuave }}
-          >
-            {textos.general.usuario}
-          </Text>
-          <Text className="mt-2 text-2xl font-bold" style={{ color: branding.colores.textoPrimario }}>
-            {tituloUsuario}
-          </Text>
-          <Text className="mt-2 text-sm leading-6" style={{ color: branding.colores.textoSecundario }}>
-            UID: {usuarioFirebase?.uid ?? "-"}
-          </Text>
-        </View>
-
-        <View className="flex-row flex-wrap gap-4">
-          <FichaResumen
-            label={textos.general.role}
-            value={usuarioApp?.esAdmin ? textos.general.admin : textos.general.usuario}
-          />
-          <FichaResumen
-            label={textos.general.plan}
-            value={usuarioApp ? obtenerNombrePlan(usuarioApp.planId, idioma) : "-"}
-          />
-          <FichaResumen
-            label="Estado"
-            value={
-              usuarioApp
-                ? obtenerNombreEstado(
-                    suscripcionExpirada(usuarioApp) ? "caducada" : usuarioApp.estadoSuscripcion,
-                    idioma
-                  )
-                : "-"
-            }
-          />
-          <FichaResumen
-            label={textos.general.idioma}
-            value={(usuarioApp?.idiomaPreferido ?? idioma).toUpperCase()}
-          />
-        </View>
-
-        <View className="px-6 py-6 shadow-tarjeta" style={estiloPanel}>
-          <Text className="text-lg font-bold" style={{ color: branding.colores.textoPrimario }}>
-            {textos.general.notifications}
-          </Text>
-          <Text className="mt-2 text-sm leading-6" style={{ color: branding.colores.textoSecundario }}>
-            {textos.home.notificationsHint}
-          </Text>
-
-          <View className="mt-4 gap-3">
-            <Text className="text-sm" style={{ color: branding.colores.textoSecundario }}>
-              Permiso: <Text className="font-semibold">{permiso}</Text>
+    <SudokuPage>
+      <View
+        className="flex-1 px-5 pt-4"
+        style={{ maxWidth: branding.layout.anchoContenido, width: "100%" }}
+      >
+        <View className="flex-row items-center justify-between">
+          <View className="flex-row items-center gap-3">
+            <View
+              className="h-11 w-11 items-center justify-center rounded-full"
+              style={{
+                backgroundColor: branding.colores.fondoElevado,
+                borderColor: branding.colores.bordeSuave,
+                borderWidth: 0.8,
+              }}
+            >
+              <Ionicons color={branding.colores.primario} name="leaf-outline" size={20} />
+            </View>
+            <Text
+              className="text-[30px]"
+              style={{
+                color: branding.colores.textoPrimario,
+                fontFamily: branding.tipografia.tituloFuerte,
+              }}
+            >
+              {branding.app.nombre}
             </Text>
-            <Text className="text-sm" style={{ color: branding.colores.textoSecundario }}>
-              Token Expo:{" "}
-              <Text className="font-semibold">
-                {expoPushToken
-                  ? `${expoPushToken.slice(0, 24)}...`
-                  : registrando
-                    ? "Registrando..."
-                    : "-"}
-              </Text>
-            </Text>
-            <Text className="text-sm" style={{ color: branding.colores.textoSecundario }}>
-              Ultima notificacion:{" "}
-              <Text className="font-semibold">{ultimaNotificacion ?? "Sin eventos aun"}</Text>
-            </Text>
-            {error ? (
-              <Text className="text-sm font-medium" style={{ color: branding.colores.advertenciaTexto }}>
-                {error}
-              </Text>
-            ) : null}
+          </View>
+
+          <View className="flex-row items-center gap-4">
+            <Ionicons color={branding.colores.primario} name="leaf-outline" size={21} />
+            <Ionicons color={branding.colores.textoSuave} name="grid-outline" size={22} />
           </View>
         </View>
 
-        <View className="px-6 py-6 shadow-tarjeta" style={estiloPanel}>
-          <Text className="text-lg font-bold" style={{ color: branding.colores.textoPrimario }}>
-            Servicios base
+        <View className="flex-1 items-center justify-center px-4 pb-16 pt-20">
+          <Text
+            className="text-center text-[28px] italic"
+            style={{
+              color: branding.colores.secundario,
+              fontFamily: branding.tipografia.tituloMedio,
+            }}
+          >
+            {textos.sudoku.home.subtituloSuave}
           </Text>
-          <View className="mt-4 gap-3">
-            <Text className="text-sm" style={{ color: branding.colores.textoSecundario }}>
-              {textos.servicios.firebase}:{" "}
-              <Text className="font-semibold">{firebaseConfigurado ? "OK" : "Pendiente"}</Text>
-            </Text>
-            <Text className="text-sm" style={{ color: branding.colores.textoSecundario }}>
-              {textos.servicios.google}:{" "}
-              <Text className="font-semibold">
-                {googleLoginDisponible() ? "OK" : "Pendiente"}
+          <Text
+            className="mt-2 text-center text-[18px]"
+            style={{
+              color: branding.colores.textoPrimario,
+              fontFamily: branding.tipografia.cuerpo,
+            }}
+          >
+            {textos.sudoku.home.subtituloFuerte}
+          </Text>
+
+          <View className="mt-12 w-full gap-3">
+            <Pressable
+              disabled={!puedeContinuar}
+              onPress={() => router.push("/(app)/juego")}
+              style={{
+                backgroundColor: puedeContinuar
+                  ? branding.colores.primario
+                  : branding.colores.bordeSuave,
+                borderRadius: 6,
+                flexDirection: "row",
+                justifyContent: "space-between",
+                paddingHorizontal: 20,
+                paddingVertical: 18,
+              }}
+            >
+              <Text
+                className="text-[15px] uppercase tracking-[1.2px]"
+                style={{
+                  color: branding.colores.textoInvertido,
+                  fontFamily: branding.tipografia.cuerpoSemi,
+                }}
+              >
+                {textos.sudoku.home.continuar}
               </Text>
+              <Ionicons color={branding.colores.textoInvertido} name="play-outline" size={22} />
+            </Pressable>
+
+            <Text
+              className="text-center text-[12px]"
+              style={{ color: branding.colores.textoSuave, fontFamily: branding.tipografia.cuerpo }}
+            >
+              {puedeContinuar
+                ? `${SUDOKU_DIFICULTADES[resumen.dificultad].titulo} - ${formatearDuracion(
+                    resumen.segundosTranscurridos
+                  )}`
+                : textos.sudoku.home.sinPartida}
             </Text>
-            <Text className="text-sm" style={{ color: branding.colores.textoSecundario }}>
-              {textos.servicios.push}: <Text className="font-semibold">OK</Text>
-            </Text>
-            <Text className="text-sm" style={{ color: branding.colores.textoSecundario }}>
-              {textos.servicios.revenuecat}:{" "}
-              <Text className="font-semibold">
-                {isRevenueCatDisponible() ? "Configurable" : "No-op"}
+
+            <Pressable
+              className="flex-row items-center gap-4 px-5 py-5"
+              onPress={() => router.push("/(app)/nueva-partida")}
+              style={{
+                backgroundColor: branding.colores.fondoElevado,
+                borderColor: branding.colores.bordeSuave,
+                borderRadius: 6,
+                borderWidth: 0.8,
+              }}
+            >
+              <Ionicons color={branding.colores.primario} name="add-circle-outline" size={24} />
+              <Text
+                className="text-[16px]"
+                style={{ color: branding.colores.textoPrimario, fontFamily: branding.tipografia.cuerpoSemi }}
+              >
+                {textos.sudoku.home.nuevaPartida}
               </Text>
-            </Text>
-            <Text className="text-sm" style={{ color: branding.colores.textoSecundario }}>
-              Fecha expira:{" "}
-              <Text className="font-semibold">
-                {usuarioApp
-                  ? formatearFecha(usuarioApp.expiraEl, idioma === "en" ? "en-US" : "es-CL")
-                  : "-"}
+            </Pressable>
+
+            <Pressable
+              className="flex-row items-center gap-4 px-5 py-5"
+              onPress={() => router.push("/(app)/estadisticas")}
+              style={{
+                backgroundColor: branding.colores.fondoElevado,
+                borderColor: branding.colores.bordeSuave,
+                borderRadius: 6,
+                borderWidth: 0.8,
+              }}
+            >
+              <Ionicons color={branding.colores.primario} name="stats-chart-outline" size={24} />
+              <Text
+                className="text-[16px]"
+                style={{ color: branding.colores.textoPrimario, fontFamily: branding.tipografia.cuerpoSemi }}
+              >
+                {textos.sudoku.home.estadisticas}
               </Text>
-            </Text>
+            </Pressable>
           </View>
         </View>
-
-        <View
-          className="px-6 py-6"
-          style={{
-            ...estiloPanel,
-            borderColor: branding.colores.bordeFuerte,
-            borderStyle: "dashed",
-          }}
-        >
-          <Text className="text-base font-semibold" style={{ color: branding.colores.textoPrimario }}>
-            {textos.home.contextoIa}
-          </Text>
-        </View>
-
-        <Boton
-          etiqueta={textos.general.cerrarSesion}
-          icono={<Ionicons color={branding.colores.textoInvertido} name="log-out-outline" size={20} />}
-          onPress={() => {
-            void cerrarSesion();
-          }}
-          variante="secundario"
-        />
       </View>
-    </Pantalla>
+    </SudokuPage>
   );
 }

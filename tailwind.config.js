@@ -6,15 +6,16 @@ module.exports = {
     extend: {
       colors: {
         marca: {
-          arena: "#f7f1e3",
-          cobre: "#c96b3b",
-          petroleo: "#113946",
-          espuma: "#fffaf2",
-          borde: "#dfd3c3",
+          arena: "#F5F1ED",
+          niebla: "#E8E1D8",
+          piedra: "#70798C",
+          taupe: "#A99985",
+          tinta: "#252323",
+          borde: "#D8CFC4",
         },
       },
       boxShadow: {
-        tarjeta: "0 12px 40px rgba(17, 57, 70, 0.12)",
+        tarjeta: "0 8px 26px rgba(37, 35, 35, 0.05)",
       },
     },
   },

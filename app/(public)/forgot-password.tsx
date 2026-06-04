@@ -50,8 +50,8 @@ export default function ForgotPasswordScreen() {
     <Pantalla aviso={!firebaseConfigurado ? textos.general.configuracionFaltante : null}>
       <TarjetaAuth
         descripcion={textos.auth.recuperar.descripcion}
-        subtitulo={textos.auth.sesion.subtitulo}
-        titulo={textos.auth.sesion.recuperar}
+        subtitulo={textos.auth.recuperar.subtitulo}
+        titulo={textos.auth.recuperar.titulo}
       >
         <Controller
           control={control}
@@ -63,7 +63,7 @@ export default function ForgotPasswordScreen() {
               autoCorrect={false}
               error={errors.email?.message}
               keyboardType="email-address"
-              label="Email"
+              label="Correo"
               onBlur={onBlur}
               onChangeText={onChange}
               placeholder="tu@correo.com"
@@ -73,13 +73,19 @@ export default function ForgotPasswordScreen() {
         />
 
         {estadoExito ? (
-          <Text className="text-sm font-medium" style={{ color: branding.colores.exito }}>
+          <Text
+            className="text-sm"
+            style={{ color: branding.colores.exito, fontFamily: branding.tipografia.cuerpoMedio }}
+          >
             {estadoExito}
           </Text>
         ) : null}
 
         {errorGeneral ? (
-          <Text className="text-sm font-medium" style={{ color: branding.colores.error }}>
+          <Text
+            className="text-sm"
+            style={{ color: branding.colores.error, fontFamily: branding.tipografia.cuerpoMedio }}
+          >
             {errorGeneral}
           </Text>
         ) : null}
@@ -95,18 +101,13 @@ export default function ForgotPasswordScreen() {
         />
 
         <Link href="/(public)/sign-in" asChild>
-          <Pressable
-            className="px-4 py-4"
-            style={{
-              backgroundColor: branding.colores.superficie,
-              borderColor: branding.colores.bordeSuave,
-              borderRadius: branding.layout.radioControl,
-              borderWidth: 1,
-            }}
-          >
+          <Pressable className="items-center py-1">
             <Text
-              className="text-center text-base font-bold"
-              style={{ color: branding.colores.textoPrimario }}
+              style={{
+                color: branding.colores.textoPrimario,
+                fontFamily: branding.tipografia.cuerpoSemi,
+                fontSize: 13,
+              }}
             >
               {textos.auth.recuperar.volver}
             </Text>

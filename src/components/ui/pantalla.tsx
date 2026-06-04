@@ -1,8 +1,9 @@
-import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native";
+import { KeyboardAvoidingView, Platform, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { PropsWithChildren, ReactNode } from "react";
 
 import { branding } from "@/src/config/branding";
+import { useTema } from "@/src/hooks/use-tema";
 
 interface PantallaProps extends PropsWithChildren {
   aviso?: string | null;
@@ -10,30 +11,83 @@ interface PantallaProps extends PropsWithChildren {
 }
 
 export function Pantalla({ aviso, cabecera, children }: PantallaProps) {
+  const { colores, modoOscuro } = useTema();
+
   return (
-    <SafeAreaView className="flex-1" style={{ backgroundColor: branding.colores.fondoApp }}>
+    <SafeAreaView style={{ backgroundColor: colores.fondoApp, flex: 1, position: "relative" }}>
+      <View
+        pointerEvents="none"
+        style={{
+          bottom: 0,
+          left: 0,
+          position: "absolute",
+          right: 0,
+          top: 0,
+          zIndex: 0,
+        }}
+      >
+        <View
+          style={{
+            backgroundColor: colores.resalteGrupo,
+            borderRadius: 999,
+            height: 220,
+            opacity: modoOscuro ? 0.22 : 0.6,
+            position: "absolute",
+            right: -48,
+            top: -74,
+            width: 220,
+          }}
+        />
+        <View
+          style={{
+            backgroundColor: colores.resalteCelda,
+            borderRadius: 999,
+            bottom: -54,
+            height: 180,
+            left: -36,
+            opacity: modoOscuro ? 0.18 : 0.46,
+            position: "absolute",
+            width: 180,
+          }}
+        />
+      </View>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
-        className="flex-1"
+        style={{ flex: 1 }}
       >
-        <ScrollView
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={{ flexGrow: 1 }}
-          className="flex-1"
+        <View
+          style={{
+            alignItems: "center",
+            flex: 1,
+            justifyContent: "center",
+            paddingHorizontal: 16,
+            paddingVertical: 24,
+            width: "100%",
+            zIndex: 1,
+          }}
         >
-          <View className="flex-1 justify-center px-5 py-8">
-            {cabecera ? <View className="mb-6">{cabecera}</View> : null}
+          <View style={{ maxWidth: branding.layout.anchoTarjetaAuth, width: "100%" }}>
+            {cabecera ? <View style={{ marginBottom: 20 }}>{cabecera}</View> : null}
 
             {aviso ? (
               <View
-                className="mb-4 rounded-2xl px-4 py-3"
                 style={{
-                  backgroundColor: branding.colores.advertenciaFondo,
-                  borderColor: branding.colores.advertenciaBorde,
+                  backgroundColor: colores.advertenciaFondo,
+                  borderColor: colores.advertenciaBorde,
+                  borderRadius: 18,
                   borderWidth: 1,
+                  marginBottom: 16,
+                  paddingHorizontal: 16,
+                  paddingVertical: 12,
                 }}
               >
-                <Text className="text-sm font-medium" style={{ color: branding.colores.advertenciaTexto }}>
+                <Text
+                  style={{
+                    color: colores.advertenciaTexto,
+                    fontFamily: branding.tipografia.cuerpoMedio,
+                    fontSize: 14,
+                  }}
+                >
                   {aviso}
                 </Text>
               </View>
@@ -41,7 +95,7 @@ export function Pantalla({ aviso, cabecera, children }: PantallaProps) {
 
             {children}
           </View>
-        </ScrollView>
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

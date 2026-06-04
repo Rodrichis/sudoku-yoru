@@ -2,6 +2,7 @@ import { Text, View } from "react-native";
 import type { PropsWithChildren } from "react";
 
 import { branding } from "@/src/config/branding";
+import { useTema } from "@/src/hooks/use-tema";
 
 interface TarjetaAuthProps extends PropsWithChildren {
   descripcion: string;
@@ -15,36 +16,95 @@ export function TarjetaAuth({
   subtitulo,
   titulo,
 }: TarjetaAuthProps) {
+  const { colores } = useTema();
+
   return (
     <View
-      className="w-full px-6 py-6 shadow-sm"
       style={{
-        backgroundColor: branding.colores.superficie,
-        borderColor: branding.colores.bordeSuave,
+        backgroundColor: colores.superficie,
+        borderColor: colores.bordeSuave,
         borderRadius: branding.layout.radioTarjeta,
         borderWidth: 1,
         maxWidth: branding.layout.anchoTarjetaAuth,
+        paddingHorizontal: 20,
+        paddingVertical: 24,
+        width: "100%",
       }}
     >
-      <View className="mb-6">
+      <View style={{ marginBottom: 28 }}>
+        <View style={{ alignItems: "center", flexDirection: "row", marginBottom: 20 }}>
+          <View
+            style={{
+              alignItems: "center",
+              backgroundColor: colores.superficieOscura,
+              borderColor: colores.bordeSuave,
+              borderRadius: 999,
+              borderWidth: 0.8,
+              height: 44,
+              justifyContent: "center",
+              marginRight: 12,
+              width: 44,
+            }}
+          >
+            <View
+              style={{
+                borderColor: colores.primario,
+                borderRadius: 6,
+                borderWidth: 1.2,
+                height: 20,
+                width: 20,
+              }}
+            />
+          </View>
+
+          <View>
+            <Text
+              style={{
+                color: colores.textoSuave,
+                fontFamily: branding.tipografia.cuerpoSemi,
+                fontSize: 11,
+                letterSpacing: 2.2,
+              }}
+            >
+              {branding.app.nombre}
+            </Text>
+            <Text
+              style={{
+                color: colores.secundario,
+                fontFamily: branding.tipografia.cuerpo,
+                fontSize: 11,
+                letterSpacing: 2,
+                marginTop: 4,
+              }}
+            >
+              {subtitulo}
+            </Text>
+          </View>
+        </View>
+
         <Text
-          className="text-xs font-semibold uppercase tracking-[1.8px]"
-          style={{ color: branding.colores.textoSuave }}
-        >
-          {subtitulo}
-        </Text>
-        <Text
-          className="mt-2 text-3xl font-extrabold leading-9"
-          style={{ color: branding.colores.textoPrimario }}
+          style={{
+            color: colores.textoPrimario,
+            fontFamily: branding.tipografia.tituloFuerte,
+            fontSize: 32,
+            lineHeight: 38,
+          }}
         >
           {titulo}
         </Text>
-        <Text className="mt-3 text-base leading-6" style={{ color: branding.colores.textoSecundario }}>
+        <Text
+          style={{
+            color: colores.textoSecundario,
+            fontFamily: branding.tipografia.cuerpo,
+            fontSize: 15,
+            lineHeight: 24,
+            marginTop: 12,
+          }}
+        >
           {descripcion}
         </Text>
       </View>
-
-      <View className="gap-4">{children}</View>
+      <View>{children}</View>
     </View>
   );
 }

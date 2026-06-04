@@ -1,8 +1,10 @@
 import { createContext, useContext, useEffect, useMemo, useState, type PropsWithChildren } from "react";
-import * as Notifications from "expo-notifications";
 
-import { registrarDispositivoPush } from "@/src/services/notifications";
 import { useSesion } from "@/src/hooks/use-sesion";
+import {
+  registrarDispositivoPush,
+  suscribirEventosNotificaciones,
+} from "@/src/services/notifications";
 
 interface NotificacionesContextoValor {
   error: string | null;
@@ -24,42 +26,61 @@ export function NotificacionesProvider({ children }: PropsWithChildren) {
   const { usuarioFirebase } = useSesion();
 
   useEffect(() => {
-    const recibido = Notifications.addNotificationReceivedListener((notificacion) => {
-      setUltimaNotificacion(
-        typeof notificacion.request.content.title === "string"
-          ? notificacion.request.content.title
-          : "Notificacion recibida"
-      );
-    });
+    let activa = true;
+    let cancelar: () => void = () => undefined;
 
-    const respuesta = Notifications.addNotificationResponseReceivedListener((evento) => {
-      setUltimaNotificacion(
-        typeof evento.notification.request.content.title === "string"
-          ? evento.notification.request.content.title
-          : "Notificacion abierta"
-      );
+    void suscribirEventosNotificaciones({
+      onNotificacionAbierta: (titulo) => {
+        if (activa) {
+          setUltimaNotificacion(titulo);
+        }
+      },
+      onNotificacionRecibida: (titulo) => {
+        if (activa) {
+          setUltimaNotificacion(titulo);
+        }
+      },
+    }).then((cancelarSuscripcion) => {
+      if (!activa) {
+        cancelarSuscripcion();
+        return;
+      }
+
+      cancelar = cancelarSuscripcion;
     });
 
     return () => {
-      recibido.remove();
-      respuesta.remove();
+      activa = false;
+      cancelar();
     };
   }, []);
 
   useEffect(() => {
     if (!usuarioFirebase?.uid) {
       setExpoPushToken(null);
+      setRegistrando(false);
       return;
     }
+
+    let activa = true;
 
     void (async () => {
       setRegistrando(true);
       const resultado = await registrarDispositivoPush(usuarioFirebase.uid);
+
+      if (!activa) {
+        return;
+      }
+
       setExpoPushToken(resultado.expoPushToken);
       setPermiso(resultado.permiso);
       setError(resultado.error ?? null);
       setRegistrando(false);
     })();
+
+    return () => {
+      activa = false;
+    };
   }, [usuarioFirebase?.uid]);
 
   const valor = useMemo<NotificacionesContextoValor>(

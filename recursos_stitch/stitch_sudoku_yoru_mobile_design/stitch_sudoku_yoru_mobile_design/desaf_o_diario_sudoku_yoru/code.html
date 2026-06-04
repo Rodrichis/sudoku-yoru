@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-container": "#fffbff",
+                    "surface-container": "#f2ecec",
+                    "on-primary": "#ffffff",
+                    "surface-dim": "#ded9d8",
+                    "on-tertiary-fixed-variant": "#4a4640",
+                    "on-secondary-fixed-variant": "#514535",
+                    "on-primary-fixed-variant": "#3e4758",
+                    "background": "#fef8f7",
+                    "surface-tint": "#565f71",
+                    "tertiary": "#605b54",
+                    "inverse-primary": "#bec7dc",
+                    "tertiary-container": "#79746d",
+                    "on-primary-container": "#fefcff",
+                    "secondary-fixed-dim": "#d5c4ae",
+                    "surface-container-high": "#ede7e6",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed": "#131c2b",
+                    "secondary": "#6a5c4b",
+                    "error-container": "#ffdad6",
+                    "inverse-surface": "#323030",
+                    "error": "#ba1a1a",
+                    "surface": "#fef8f7",
+                    "tertiary-fixed": "#e8e1d8",
+                    "outline": "#75777d",
+                    "inverse-on-surface": "#f5efef",
+                    "on-surface-variant": "#45474c",
+                    "primary": "#535c6e",
+                    "primary-fixed": "#dae2f8",
+                    "surface-bright": "#fef8f7",
+                    "secondary-container": "#f2e0c9",
+                    "tertiary-fixed-dim": "#ccc6bd",
+                    "on-error": "#ffffff",
+                    "secondary-fixed": "#f2e0c9",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-highest": "#e7e1e1",
+                    "on-surface": "#1d1b1b",
+                    "surface-variant": "#e7e1e1",
+                    "on-error-container": "#93000a",
+                    "on-background": "#1d1b1b",
+                    "on-secondary-fixed": "#231a0c",
+                    "surface-container-low": "#f8f2f2",
+                    "on-secondary-container": "#706250",
+                    "primary-container": "#6c7588",
+                    "outline-variant": "#c5c6cd",
+                    "on-tertiary": "#ffffff",
+                    "primary-fixed-dim": "#bec7dc",
+                    "on-tertiary-fixed": "#1e1b16"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "xxl": "48px",
+                    "gutter": "12px",
+                    "lg": "24px",
+                    "base": "4px",
+                    "xl": "32px",
+                    "xs": "8px",
+                    "margin-mobile": "20px",
+                    "sm": "12px",
+                    "md": "16px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Playfair Display"],
+                    "label-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "grid-number": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "display-lg": ["Playfair Display"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Playfair Display"],
+                    "title-md": ["Playfair Display"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "grid-number": ["24px", {"lineHeight": "24px", "fontWeight": "300"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "display-lg": ["42px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "26px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "title-md": ["22px", {"lineHeight": "28px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #fef8f7;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+        .calendar-cell {
+            aspect-ratio: 1 / 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        .active-day {
+            background-color: #6a5c4b;
+            color: #ffffff;
+        }
+        .completed-day {
+            background-color: #f2e0c9;
+            color: #6a5c4b;
+            position: relative;
+        }
+        .completed-day::after {
+            content: 'check';
+            font-family: 'Material Symbols Outlined';
+            font-size: 10px;
+            position: absolute;
+            bottom: 4px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="flex flex-col min-h-screen text-on-surface">
+<!-- TopAppBar -->
+<header class="w-full top-0 bg-background dark:bg-background flex justify-between items-center px-margin-mobile py-lg z-50">
+<button class="hover:opacity-80 transition-opacity scale-95 duration-200 transition-transform text-primary">
+<span class="material-symbols-outlined">grid_view</span>
+</button>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Sudoku Yoru</h1>
+<button class="hover:opacity-80 transition-opacity scale-95 duration-200 transition-transform text-primary">
+<span class="material-symbols-outlined">eco</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 px-margin-mobile pb-xxl">
+<!-- Header Section -->
+<section class="mt-md mb-xl text-center">
+<h2 class="font-title-md text-title-md text-primary">Reto Mensual</h2>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-base">Octubre 2023</p>
+</section>
+<!-- Elegant Calendar View -->
+<div class="bg-surface-container-low rounded-xl p-md mb-xl border border-outline-variant/30">
+<div class="calendar-grid text-center mb-sm">
+<span class="font-label-sm text-label-sm text-outline">L</span>
+<span class="font-label-sm text-label-sm text-outline">M</span>
+<span class="font-label-sm text-label-sm text-outline">X</span>
+<span class="font-label-sm text-label-sm text-outline">J</span>
+<span class="font-label-sm text-label-sm text-outline">V</span>
+<span class="font-label-sm text-label-sm text-outline">S</span>
+<span class="font-label-sm text-label-sm text-outline">D</span>
+</div>
+<div class="calendar-grid">
+<!-- Previous month days placeholder -->
+<div class="calendar-cell"></div>
+<div class="calendar-cell"></div>
+<!-- Completed days -->
+<div class="calendar-cell completed-day font-label-lg text-label-lg">1</div>
+<div class="calendar-cell completed-day font-label-lg text-label-lg">2</div>
+<div class="calendar-cell completed-day font-label-lg text-label-lg">3</div>
+<div class="calendar-cell completed-day font-label-lg text-label-lg">4</div>
+<div class="calendar-cell completed-day font-label-lg text-label-lg">5</div>
+<div class="calendar-cell completed-day font-label-lg text-label-lg">6</div>
+<div class="calendar-cell font-label-lg text-label-lg">7</div>
+<div class="calendar-cell completed-day font-label-lg text-label-lg">8</div>
+<div class="calendar-cell completed-day font-label-lg text-label-lg">9</div>
+<div class="calendar-cell font-label-lg text-label-lg">10</div>
+<div class="calendar-cell completed-day font-label-lg text-label-lg">11</div>
+<div class="calendar-cell font-label-lg text-label-lg">12</div>
+<div class="calendar-cell font-label-lg text-label-lg">13</div>
+<div class="calendar-cell font-label-lg text-label-lg">14</div>
+<div class="calendar-cell font-label-lg text-label-lg">15</div>
+<div class="calendar-cell font-label-lg text-label-lg">16</div>
+<div class="calendar-cell font-label-lg text-label-lg">17</div>
+<div class="calendar-cell font-label-lg text-label-lg">18</div>
+<div class="calendar-cell active-day font-label-lg text-label-lg">19</div>
+<div class="calendar-cell font-label-lg text-label-lg">20</div>
+<div class="calendar-cell font-label-lg text-label-lg">21</div>
+<div class="calendar-cell font-label-lg text-label-lg">22</div>
+<div class="calendar-cell font-label-lg text-label-lg">23</div>
+<div class="calendar-cell font-label-lg text-label-lg">24</div>
+<div class="calendar-cell font-label-lg text-label-lg">25</div>
+<div class="calendar-cell font-label-lg text-label-lg">26</div>
+<div class="calendar-cell font-label-lg text-label-lg">27</div>
+<div class="calendar-cell font-label-lg text-label-lg">28</div>
+<div class="calendar-cell font-label-lg text-label-lg">29</div>
+<div class="calendar-cell font-label-lg text-label-lg">30</div>
+<div class="calendar-cell font-label-lg text-label-lg">31</div>
+</div>
+</div>
+<!-- Today's Challenge Card -->
+<div class="bg-surface-container rounded-xl overflow-hidden border border-outline-variant/20 mb-lg">
+<div class="relative h-32 w-full">
+<img class="w-full h-full object-cover opacity-80" data-alt="A serene, high-angle shot of a minimalist workspace featuring a linen-bound notebook and a premium wooden pencil resting on a soft beige surface. The lighting is soft and natural, coming from a nearby window, creating a peaceful and focused atmosphere. The color palette is composed of muted earth tones and creamy whites, embodying the zen-like philosophy of mental clarity and puzzle solving." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQts9Tfv-AigZExYGG0soUYFgz8l-rt5FxppkF4uR3KtbhEr2okPchi_eCEiWwdLxWEuWoc8KKRogsre8LVVHXAjmwBFWvnM306ayJsAQjNjD009Q5cTTcC5OTSz6c3AUuiUfJ_Uvba4vhJypzlNskoWrQovQG5k47K5Y4y8L3BG1cbadd1ODZuKa8a_PbyGKlOJIlo8zeipw7gGYX_LMzGLcsWjibX02Y4AsA22s5mEE9lO1Yf1pZvAggTzcu98DhpAukcrM-TRA"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container to-transparent"></div>
+<div class="absolute bottom-md left-md">
+<span class="inline-block px-sm py-1 bg-secondary-container text-on-secondary-container text-label-sm font-label-sm rounded-full mb-xs">Nivel: Medio</span>
+<h3 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Desafío de hoy</h3>
+</div>
+</div>
+<div class="p-md space-y-md">
+<div class="flex justify-between items-center">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Tu progreso</span>
+<span class="font-body-md text-body-md text-on-surface">65% completado</span>
+</div>
+<div class="w-24 h-2 bg-outline-variant/30 rounded-full overflow-hidden">
+<div class="w-2/3 h-full bg-primary"></div>
+</div>
+</div>
+<button class="w-full py-md bg-primary text-on-primary font-label-lg text-label-lg rounded-xl hover:opacity-90 transition-all active:scale-95">
+                    Jugar desafío
+                </button>
+</div>
+</div>
+<!-- Stats Grid (Bento Style) -->
+<div class="grid grid-cols-2 gap-md">
+<div class="bg-surface-container-low p-md rounded-xl border border-outline-variant/20">
+<span class="material-symbols-outlined text-secondary mb-xs">military_tech</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Racha</p>
+<p class="font-title-md text-title-md text-on-surface">12 días</p>
+</div>
+<div class="bg-surface-container-low p-md rounded-xl border border-outline-variant/20">
+<span class="material-symbols-outlined text-secondary mb-xs">history</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Tiempo med.</p>
+<p class="font-title-md text-title-md text-on-surface">8:42</p>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 pb-safe bg-background border-t-[0.5px] border-outline-variant flex justify-around items-center h-xxl px-xl">
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined">home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed-dim relative after:content-[''] after:absolute after:-bottom-1 after:w-1 after:h-1 after:bg-primary after:rounded-full active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined">analytics</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</nav>
+<script>
+        // Micro-interaction for calendar cells
+        document.querySelectorAll('.calendar-cell').forEach(cell => {
+            cell.addEventListener('click', function() {
+                if(this.innerText) {
+                    document.querySelectorAll('.calendar-cell').forEach(c => c.classList.remove('active-day'));
+                    this.classList.add('active-day');
+                }
+            });
+        });
+    </script>
+</body></html>

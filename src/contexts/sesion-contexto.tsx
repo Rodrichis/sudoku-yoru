@@ -4,12 +4,21 @@ import { doc, onSnapshot } from "firebase/firestore";
 
 import { resolverIdiomaInicial } from "@/src/i18n";
 import { auth, db } from "@/src/services/firebaseConfig";
+import { guardarSesionInvitado, cargarSesionInvitado } from "@/src/services/sesion-invitado";
 import type { Idioma } from "@/src/types/idioma";
 import type { UsuarioBase } from "@/src/types/usuario";
 
+type TipoSesion = "firebase" | "invitado" | null;
+
 interface SesionContextoValor {
   cargando: boolean;
+  entrarComoInvitado: () => Promise<void>;
+  esInvitado: boolean;
   idioma: Idioma;
+  perfilId: string | null;
+  salirSesionActual: () => Promise<void>;
+  tieneSesionActiva: boolean;
+  tipoSesion: TipoSesion;
   usuarioApp: UsuarioBase | null;
   usuarioFirebase: User | null;
 }
@@ -17,13 +26,41 @@ interface SesionContextoValor {
 export const SesionContexto = createContext<SesionContextoValor | null>(null);
 
 export function SesionProvider({ children }: PropsWithChildren) {
-  const [cargando, setCargando] = useState(true);
+  const [cargandoAuth, setCargandoAuth] = useState(Boolean(auth));
+  const [cargandoInvitado, setCargandoInvitado] = useState(true);
+  const [esInvitado, setEsInvitado] = useState(false);
   const [usuarioApp, setUsuarioApp] = useState<UsuarioBase | null>(null);
   const [usuarioFirebase, setUsuarioFirebase] = useState<User | null>(null);
 
   useEffect(() => {
+    let activa = true;
+
+    void cargarSesionInvitado()
+      .then((invitadoActivo) => {
+        if (!activa) {
+          return;
+        }
+
+        setEsInvitado(invitadoActivo);
+        setCargandoInvitado(false);
+      })
+      .catch(() => {
+        if (!activa) {
+          return;
+        }
+
+        setEsInvitado(false);
+        setCargandoInvitado(false);
+      });
+
+    return () => {
+      activa = false;
+    };
+  }, []);
+
+  useEffect(() => {
     if (!auth) {
-      setCargando(false);
+      setCargandoAuth(false);
       return;
     }
 
@@ -37,19 +74,24 @@ export function SesionProvider({ children }: PropsWithChildren) {
 
       if (!siguienteUsuario || !db) {
         setUsuarioApp(null);
-        setCargando(false);
+        setCargandoAuth(false);
         return;
+      }
+
+      if (esInvitado) {
+        setEsInvitado(false);
+        void guardarSesionInvitado(false);
       }
 
       cancelarUsuario = onSnapshot(
         doc(db, "usuarios", siguienteUsuario.uid),
         (snapshot) => {
           setUsuarioApp(snapshot.exists() ? (snapshot.data() as UsuarioBase) : null);
-          setCargando(false);
+          setCargandoAuth(false);
         },
         () => {
           setUsuarioApp(null);
-          setCargando(false);
+          setCargandoAuth(false);
         }
       );
     });
@@ -58,16 +100,50 @@ export function SesionProvider({ children }: PropsWithChildren) {
       cancelarUsuario?.();
       cancelarAuth();
     };
-  }, []);
+  }, [esInvitado]);
+
+  async function entrarComoInvitado() {
+    setEsInvitado(true);
+    await guardarSesionInvitado(true);
+  }
+
+  async function salirSesionActual() {
+    if (auth?.currentUser) {
+      await auth.signOut();
+    }
+
+    setEsInvitado(false);
+    setUsuarioApp(null);
+    await guardarSesionInvitado(false);
+  }
+
+  const tieneSesionActiva = Boolean(usuarioFirebase || esInvitado);
+  const perfilId = usuarioFirebase?.uid ?? (esInvitado ? "guest" : null);
+  const tipoSesion: TipoSesion = usuarioFirebase ? "firebase" : esInvitado ? "invitado" : null;
+  const cargando = cargandoAuth || cargandoInvitado;
 
   const valor = useMemo<SesionContextoValor>(
     () => ({
       cargando,
+      entrarComoInvitado,
+      esInvitado,
       idioma: usuarioApp?.idiomaPreferido ?? resolverIdiomaInicial(),
+      perfilId,
+      salirSesionActual,
+      tieneSesionActiva,
+      tipoSesion,
       usuarioApp,
       usuarioFirebase,
     }),
-    [cargando, usuarioApp, usuarioFirebase]
+    [
+      cargando,
+      esInvitado,
+      perfilId,
+      tieneSesionActiva,
+      tipoSesion,
+      usuarioApp,
+      usuarioFirebase,
+    ]
   );
 
   return <SesionContexto.Provider value={valor}>{children}</SesionContexto.Provider>;

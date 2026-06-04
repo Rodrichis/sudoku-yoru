@@ -80,7 +80,7 @@ export default function SignUpScreen() {
               autoCorrect={false}
               error={errors.email?.message}
               keyboardType="email-address"
-              label="Email"
+              label="Correo"
               onBlur={onBlur}
               onChangeText={onChange}
               placeholder="tu@correo.com"
@@ -96,15 +96,20 @@ export default function SignUpScreen() {
             <CampoTexto
               autoCapitalize="none"
               autoCorrect={false}
-              descripcion="El usuario creado arranca con rol usuario y plan trial."
               error={errors.password?.message}
-              label="Password"
+              label="Clave"
               onBlur={onBlur}
               onChangeText={onChange}
-              placeholder="Crea una password"
+              placeholder="Crea tu clave"
               rightAccessory={
                 <Pressable onPress={() => setMostrarPassword((actual) => !actual)}>
-                  <Text className="text-sm font-semibold" style={{ color: branding.colores.textoSuave }}>
+                  <Text
+                    className="text-sm"
+                    style={{
+                      color: branding.colores.textoSuave,
+                      fontFamily: branding.tipografia.cuerpoSemi,
+                    }}
+                  >
                     {mostrarPassword ? "Ocultar" : "Ver"}
                   </Text>
                 </Pressable>
@@ -123,13 +128,19 @@ export default function SignUpScreen() {
               autoCapitalize="none"
               autoCorrect={false}
               error={errors.confirmacionPassword?.message}
-              label="Confirmar password"
+              label="Confirmar clave"
               onBlur={onBlur}
               onChangeText={onChange}
-              placeholder="Repite la password"
+              placeholder="Repite tu clave"
               rightAccessory={
                 <Pressable onPress={() => setMostrarConfirmacion((actual) => !actual)}>
-                  <Text className="text-sm font-semibold" style={{ color: branding.colores.textoSuave }}>
+                  <Text
+                    className="text-sm"
+                    style={{
+                      color: branding.colores.textoSuave,
+                      fontFamily: branding.tipografia.cuerpoSemi,
+                    }}
+                  >
                     {mostrarConfirmacion ? "Ocultar" : "Ver"}
                   </Text>
                 </Pressable>
@@ -141,7 +152,10 @@ export default function SignUpScreen() {
         />
 
         {errorGeneral ? (
-          <Text className="text-sm font-medium" style={{ color: branding.colores.error }}>
+          <Text
+            className="text-sm"
+            style={{ color: branding.colores.error, fontFamily: branding.tipografia.cuerpoMedio }}
+          >
             {errorGeneral}
           </Text>
         ) : null}
@@ -155,18 +169,13 @@ export default function SignUpScreen() {
         />
 
         <Link href="/(public)/sign-in" asChild>
-          <Pressable
-            className="px-4 py-4"
-            style={{
-              backgroundColor: branding.colores.superficie,
-              borderColor: branding.colores.bordeSuave,
-              borderRadius: branding.layout.radioControl,
-              borderWidth: 1,
-            }}
-          >
+          <Pressable className="items-center py-1">
             <Text
-              className="text-center text-base font-bold"
-              style={{ color: branding.colores.textoPrimario }}
+              style={{
+                color: branding.colores.textoPrimario,
+                fontFamily: branding.tipografia.cuerpoSemi,
+                fontSize: 13,
+              }}
             >
               {textos.auth.registro.volver}
             </Text>

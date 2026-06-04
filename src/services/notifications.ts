@@ -1,23 +1,45 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
 import * as Device from "expo-device";
-import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 
 import { env } from "@/src/config/env";
 import { db } from "@/src/services/firebaseConfig";
 
-const DISPOSITIVO_STORAGE_KEY = "@rz-base-app/dispositivo-id";
+const DISPOSITIVO_STORAGE_KEY = "@sudoku-yoru/dispositivo-id";
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
+let handlerNotificacionesConfigurado = false;
+
+function estaEnExpoGo() {
+  return Constants.expoGoConfig !== null;
+}
+
+export function soportaPushRemoto() {
+  return Platform.OS !== "web" && !estaEnExpoGo();
+}
+
+async function cargarModuloNotifications() {
+  if (!soportaPushRemoto()) {
+    return null;
+  }
+
+  const Notifications = await import("expo-notifications");
+
+  if (!handlerNotificacionesConfigurado) {
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldPlaySound: true,
+        shouldSetBadge: false,
+        shouldShowBanner: true,
+        shouldShowList: true,
+      }),
+    });
+    handlerNotificacionesConfigurado = true;
+  }
+
+  return Notifications;
+}
 
 async function obtenerDispositivoId() {
   const actual = await AsyncStorage.getItem(DISPOSITIVO_STORAGE_KEY);
@@ -30,6 +52,11 @@ async function obtenerDispositivoId() {
 
 async function configurarCanalAndroid() {
   if (Platform.OS !== "android") return;
+
+  const Notifications = await cargarModuloNotifications();
+  if (!Notifications) {
+    return;
+  }
 
   await Notifications.setNotificationChannelAsync("default", {
     importance: Notifications.AndroidImportance.MAX,
@@ -54,11 +81,28 @@ export async function registrarDispositivoPush(uid?: string | null): Promise<Res
     };
   }
 
+  if (estaEnExpoGo()) {
+    return {
+      error: "Push remoto deshabilitado en Expo Go. Usa un development build para probar notificaciones.",
+      expoPushToken: null,
+      permiso: "no-disponible",
+    };
+  }
+
   if (!Device.isDevice) {
     return {
       error: "El registro push requiere un dispositivo fisico.",
       expoPushToken: null,
       permiso: "denegado",
+    };
+  }
+
+  const Notifications = await cargarModuloNotifications();
+  if (!Notifications) {
+    return {
+      error: "No fue posible cargar expo-notifications en este entorno.",
+      expoPushToken: null,
+      permiso: "no-disponible",
     };
   }
 
@@ -116,5 +160,36 @@ export async function registrarDispositivoPush(uid?: string | null): Promise<Res
   return {
     expoPushToken,
     permiso: permisoFinal.status,
+  };
+}
+
+export async function suscribirEventosNotificaciones(opciones: {
+  onNotificacionAbierta: (titulo: string) => void;
+  onNotificacionRecibida: (titulo: string) => void;
+}) {
+  const Notifications = await cargarModuloNotifications();
+  if (!Notifications) {
+    return () => undefined;
+  }
+
+  const recibido = Notifications.addNotificationReceivedListener((notificacion) => {
+    opciones.onNotificacionRecibida(
+      typeof notificacion.request.content.title === "string"
+        ? notificacion.request.content.title
+        : "Notificacion recibida"
+    );
+  });
+
+  const respuesta = Notifications.addNotificationResponseReceivedListener((evento) => {
+    opciones.onNotificacionAbierta(
+      typeof evento.notification.request.content.title === "string"
+        ? evento.notification.request.content.title
+        : "Notificacion abierta"
+    );
+  });
+
+  return () => {
+    recibido.remove();
+    respuesta.remove();
   };
 }

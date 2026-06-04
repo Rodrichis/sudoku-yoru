@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Sudoku Yoru - Focus. Relax. Solve.</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Playfair+Display:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-container": "#fffbff",
+                    "surface-container": "#f2ecec",
+                    "on-primary": "#ffffff",
+                    "surface-dim": "#ded9d8",
+                    "on-tertiary-fixed-variant": "#4a4640",
+                    "on-secondary-fixed-variant": "#514535",
+                    "on-primary-fixed-variant": "#3e4758",
+                    "background": "#fef8f7",
+                    "surface-tint": "#565f71",
+                    "tertiary": "#605b54",
+                    "inverse-primary": "#bec7dc",
+                    "tertiary-container": "#79746d",
+                    "on-primary-container": "#fefcff",
+                    "secondary-fixed-dim": "#d5c4ae",
+                    "surface-container-high": "#ede7e6",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed": "#131c2b",
+                    "secondary": "#6a5c4b",
+                    "error-container": "#ffdad6",
+                    "inverse-surface": "#323030",
+                    "error": "#ba1a1a",
+                    "surface": "#fef8f7",
+                    "tertiary-fixed": "#e8e1d8",
+                    "outline": "#75777d",
+                    "inverse-on-surface": "#f5efef",
+                    "on-surface-variant": "#45474c",
+                    "primary": "#535c6e",
+                    "primary-fixed": "#dae2f8",
+                    "surface-bright": "#fef8f7",
+                    "secondary-container": "#f2e0c9",
+                    "tertiary-fixed-dim": "#ccc6bd",
+                    "on-error": "#ffffff",
+                    "secondary-fixed": "#f2e0c9",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-highest": "#e7e1e1",
+                    "on-surface": "#1d1b1b",
+                    "surface-variant": "#e7e1e1",
+                    "on-error-container": "#93000a",
+                    "on-background": "#1d1b1b",
+                    "on-secondary-fixed": "#231a0c",
+                    "surface-container-low": "#f8f2f2",
+                    "on-secondary-container": "#706250",
+                    "primary-container": "#6c7588",
+                    "outline-variant": "#c5c6cd",
+                    "on-tertiary": "#ffffff",
+                    "primary-fixed-dim": "#bec7dc",
+                    "on-tertiary-fixed": "#1e1b16"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "xxl": "48px",
+                    "gutter": "12px",
+                    "lg": "24px",
+                    "base": "4px",
+                    "xl": "32px",
+                    "xs": "8px",
+                    "margin-mobile": "20px",
+                    "sm": "12px",
+                    "md": "16px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Playfair Display"],
+                    "label-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "grid-number": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "display-lg": ["Playfair Display"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Playfair Display"],
+                    "title-md": ["Playfair Display"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "grid-number": ["24px", {"lineHeight": "24px", "fontWeight": "300"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "display-lg": ["42px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "26px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "title-md": ["22px", {"lineHeight": "28px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #F5F1ED; /* Specific Brand Anchor background */
+            -webkit-tap-highlight-color: transparent;
+        }
+        .sudoku-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            aspect-ratio: 1 / 1;
+            border: 1.5px solid #535c6e;
+        }
+        .sudoku-cell {
+            border: 0.5px solid #c5c6cd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        /* Thick lines for 3x3 blocks */
+        .sudoku-cell:nth-child(3n) { border-right: 1.5px solid #535c6e; }
+        .sudoku-cell:nth-child(9n) { border-right: 0.5px solid #c5c6cd; } /* Reset right edge of grid */
+        .sudoku-cell:nth-child(n+19):nth-child(-n+27),
+        .sudoku-cell:nth-child(n+46):nth-child(-n+54) { border-bottom: 1.5px solid #535c6e; }
+        
+        .selected-cell {
+            background-color: rgba(213, 196, 174, 0.3); /* secondary-fixed-dim with opacity */
+            box-shadow: inset 0 0 0 2px #535c6e;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-on-surface selection:bg-secondary-container">
+<!-- Top Navigation (TopAppBar Shared Component Mapping) -->
+<header class="w-full top-0 bg-background flex justify-between items-center px-margin-mobile py-lg">
+<div class="flex items-center gap-sm">
+<button class="material-symbols-outlined text-primary hover:opacity-80 transition-opacity scale-95 duration-200 transition-transform">grid_view</button>
+<div class="flex flex-col">
+<span class="font-headline-lg-mobile text-[20px] leading-tight text-on-surface">Sudoku Yoru</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Expert Level</span>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex flex-col items-end">
+<span class="font-label-sm text-[10px] uppercase tracking-widest text-outline">Timer</span>
+<span class="font-grid-number text-[18px] text-primary">04:21</span>
+</div>
+<div class="flex gap-sm">
+<button class="material-symbols-outlined text-primary hover:opacity-80 transition-opacity">pause_circle</button>
+<button class="material-symbols-outlined text-primary hover:opacity-80 transition-opacity">settings</button>
+</div>
+</div>
+</header>
+<main class="max-w-md mx-auto px-margin-mobile flex flex-col gap-xl pb-xxl">
+<!-- Integrated Ad Banner -->
+<section class="w-full h-12 bg-surface-container-low rounded-lg border border-outline-variant/30 flex items-center justify-between px-md overflow-hidden">
+<div class="flex items-center gap-xs">
+<span class="px-base py-[2px] bg-outline-variant text-[10px] font-bold rounded-sm text-surface">AD</span>
+<p class="font-label-sm text-on-surface-variant text-[11px]">Premium Zen Journals: 20% off today.</p>
+</div>
+<button class="material-symbols-outlined text-[16px] text-outline">close</button>
+</section>
+<!-- Main Sudoku Board -->
+<section class="w-full">
+<div class="sudoku-grid bg-white" id="sudoku-board">
+<!-- Grid will be populated via JS for brevity but styled with Design System classes -->
+</div>
+</section>
+<!-- Toolbar -->
+<section class="flex justify-between items-center px-sm">
+<div class="flex flex-col items-center gap-xs group cursor-pointer">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-primary group-active:scale-90 transition-transform">
+<span class="material-symbols-outlined">undo</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline">Undo</span>
+</div>
+<div class="flex flex-col items-center gap-xs group cursor-pointer">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-primary group-active:scale-90 transition-transform">
+<span class="material-symbols-outlined">ink_eraser</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline">Erase</span>
+</div>
+<div class="flex flex-col items-center gap-xs group cursor-pointer">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-primary group-active:scale-90 transition-transform relative" id="notes-toggle">
+<span class="material-symbols-outlined">edit</span>
+<div class="absolute top-0 right-0 w-3 h-3 bg-primary border-2 border-background rounded-full hidden" id="notes-status"></div>
+</div>
+<span class="font-label-sm text-label-sm text-outline">Notes</span>
+</div>
+<div class="flex flex-col items-center gap-xs group cursor-pointer">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-primary group-active:scale-90 transition-transform">
+<span class="material-symbols-outlined">lightbulb</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline">Hint</span>
+</div>
+</section>
+<!-- Numeric Keypad -->
+<section class="grid grid-cols-9 gap-1">
+<button class="num-btn h-14 bg-white border border-outline-variant/50 rounded-lg flex items-center justify-center font-grid-number text-primary hover:bg-primary-fixed-dim transition-colors active:scale-95">1</button>
+<button class="num-btn h-14 bg-white border border-outline-variant/50 rounded-lg flex items-center justify-center font-grid-number text-primary hover:bg-primary-fixed-dim transition-colors active:scale-95">2</button>
+<button class="num-btn h-14 bg-white border border-outline-variant/50 rounded-lg flex items-center justify-center font-grid-number text-primary hover:bg-primary-fixed-dim transition-colors active:scale-95">3</button>
+<button class="num-btn h-14 bg-white border border-outline-variant/50 rounded-lg flex items-center justify-center font-grid-number text-primary hover:bg-primary-fixed-dim transition-colors active:scale-95">4</button>
+<button class="num-btn h-14 bg-white border border-outline-variant/50 rounded-lg flex items-center justify-center font-grid-number text-primary hover:bg-primary-fixed-dim transition-colors active:scale-95">5</button>
+<button class="num-btn h-14 bg-white border border-outline-variant/50 rounded-lg flex items-center justify-center font-grid-number text-primary hover:bg-primary-fixed-dim transition-colors active:scale-95">6</button>
+<button class="num-btn h-14 bg-white border border-outline-variant/50 rounded-lg flex items-center justify-center font-grid-number text-primary hover:bg-primary-fixed-dim transition-colors active:scale-95">7</button>
+<button class="num-btn h-14 bg-white border border-outline-variant/50 rounded-lg flex items-center justify-center font-grid-number text-primary hover:bg-primary-fixed-dim transition-colors active:scale-95">8</button>
+<button class="num-btn h-14 bg-white border border-outline-variant/50 rounded-lg flex items-center justify-center font-grid-number text-primary hover:bg-primary-fixed-dim transition-colors active:scale-95">9</button>
+</section>
+</main>
+<!-- Bottom Navigation (BottomNavBar Shared Component Mapping) -->
+<nav class="fixed bottom-0 w-full z-50 pb-safe bg-background border-t-[0.5px] border-outline-variant flex justify-around items-center h-xxl px-xl">
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 duration-150">
+<span class="material-symbols-outlined">home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-primary relative after:content-[''] after:absolute after:-bottom-1 after:w-1 after:h-1 after:bg-primary after:rounded-full active:scale-90 duration-150">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 duration-150">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</nav>
+<script>
+        // Simple Sudoku State
+        const boardElement = document.getElementById('sudoku-board');
+        const initialNumbers = [
+            [5, 3, 0, 0, 7, 0, 0, 0, 0],
+            [6, 0, 0, 1, 9, 5, 0, 0, 0],
+            [0, 9, 8, 0, 0, 0, 0, 6, 0],
+            [8, 0, 0, 0, 6, 0, 0, 0, 3],
+            [4, 0, 0, 8, 0, 3, 0, 0, 1],
+            [7, 0, 0, 0, 2, 0, 0, 0, 6],
+            [0, 6, 0, 0, 0, 0, 2, 8, 0],
+            [0, 0, 0, 4, 1, 9, 0, 0, 5],
+            [0, 0, 0, 0, 8, 0, 0, 7, 9]
+        ];
+
+        let selectedCell = null;
+        let isNotesMode = false;
+
+        function createBoard() {
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('sudoku-cell', 'font-grid-number', 'text-grid-number');
+                    const val = initialNumbers[r][c];
+                    
+                    if (val !== 0) {
+                        cell.innerText = val;
+                        cell.classList.add('text-on-surface', 'font-normal');
+                        cell.dataset.fixed = "true";
+                    } else {
+                        cell.classList.add('text-primary', 'font-light', 'cursor-pointer');
+                        cell.addEventListener('click', () => selectCell(cell));
+                    }
+                    
+                    boardElement.appendChild(cell);
+                }
+            }
+        }
+
+        function selectCell(cell) {
+            if (selectedCell) {
+                selectedCell.classList.remove('selected-cell');
+            }
+            selectedCell = cell;
+            selectedCell.classList.add('selected-cell');
+        }
+
+        document.getElementById('notes-toggle').addEventListener('click', () => {
+            isNotesMode = !isNotesMode;
+            document.getElementById('notes-status').classList.toggle('hidden', !isNotesMode);
+        });
+
+        // Keypad Interactions
+        document.querySelectorAll('.num-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (selectedCell && !selectedCell.dataset.fixed) {
+                    if (isNotesMode) {
+                        // Mimic a note in the corner
+                        selectedCell.innerHTML = `<span class="absolute top-1 left-1 font-label-sm text-[10px] text-outline">${btn.innerText}</span>`;
+                    } else {
+                        selectedCell.innerText = btn.innerText;
+                        selectedCell.classList.remove('text-error'); // Reset error if any
+                    }
+                }
+            });
+        });
+
+        createBoard();
+    </script>
+</body></html>

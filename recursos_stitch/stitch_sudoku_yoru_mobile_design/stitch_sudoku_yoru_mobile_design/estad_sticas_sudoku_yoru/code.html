@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-container": "#fffbff",
+                    "surface-container": "#f2ecec",
+                    "on-primary": "#ffffff",
+                    "surface-dim": "#ded9d8",
+                    "on-tertiary-fixed-variant": "#4a4640",
+                    "on-secondary-fixed-variant": "#514535",
+                    "on-primary-fixed-variant": "#3e4758",
+                    "background": "#fef8f7",
+                    "surface-tint": "#565f71",
+                    "tertiary": "#605b54",
+                    "inverse-primary": "#bec7dc",
+                    "tertiary-container": "#79746d",
+                    "on-primary-container": "#fefcff",
+                    "secondary-fixed-dim": "#d5c4ae",
+                    "surface-container-high": "#ede7e6",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed": "#131c2b",
+                    "secondary": "#6a5c4b",
+                    "error-container": "#ffdad6",
+                    "inverse-surface": "#323030",
+                    "error": "#ba1a1a",
+                    "surface": "#fef8f7",
+                    "tertiary-fixed": "#e8e1d8",
+                    "outline": "#75777d",
+                    "inverse-on-surface": "#f5efef",
+                    "on-surface-variant": "#45474c",
+                    "primary": "#535c6e",
+                    "primary-fixed": "#dae2f8",
+                    "surface-bright": "#fef8f7",
+                    "secondary-container": "#f2e0c9",
+                    "tertiary-fixed-dim": "#ccc6bd",
+                    "on-error": "#ffffff",
+                    "secondary-fixed": "#f2e0c9",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-highest": "#e7e1e1",
+                    "on-surface": "#1d1b1b",
+                    "surface-variant": "#e7e1e1",
+                    "on-error-container": "#93000a",
+                    "on-background": "#1d1b1b",
+                    "on-secondary-fixed": "#231a0c",
+                    "surface-container-low": "#f8f2f2",
+                    "on-secondary-container": "#706250",
+                    "primary-container": "#6c7588",
+                    "outline-variant": "#c5c6cd",
+                    "on-tertiary": "#ffffff",
+                    "primary-fixed-dim": "#bec7dc",
+                    "on-tertiary-fixed": "#1e1b16",
+                    "chart-blue": "#70798C",
+                    "chart-tan": "#A99985"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "xxl": "48px",
+                    "gutter": "12px",
+                    "lg": "24px",
+                    "base": "4px",
+                    "xl": "32px",
+                    "xs": "8px",
+                    "margin-mobile": "20px",
+                    "sm": "12px",
+                    "md": "16px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Playfair Display"],
+                    "label-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "grid-number": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "display-lg": ["Playfair Display"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Playfair Display"],
+                    "title-md": ["Playfair Display"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "grid-number": ["24px", {"lineHeight": "24px", "fontWeight": "300"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "display-lg": ["42px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "26px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "title-md": ["22px", {"lineHeight": "28px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #fef8f7;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .chart-bar {
+            transition: height 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body-md text-on-surface">
+<!-- Top Navigation Anchor -->
+<header class="w-full top-0 bg-background dark:bg-background flex justify-between items-center px-margin-mobile py-lg z-40 fixed">
+<div class="flex items-center gap-base">
+<span class="material-symbols-outlined text-primary" data-icon="grid_view">grid_view</span>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Sudoku Yoru</h1>
+<div class="flex items-center gap-base">
+<span class="material-symbols-outlined text-primary" data-icon="eco">eco</span>
+</div>
+</header>
+<main class="pt-[100px] pb-xxl px-margin-mobile max-w-md mx-auto">
+<!-- Editorial Header Section -->
+<section class="mb-xl text-center">
+<h2 class="font-display-lg text-display-lg text-primary mb-base">Tu progreso</h2>
+<p class="font-body-md text-on-surface-variant opacity-70">Un registro de tu calma y enfoque.</p>
+</section>
+<!-- Main Stats Bento Grid -->
+<div class="grid grid-cols-2 gap-sm mb-xl">
+<!-- Games Played -->
+<div class="bg-surface-container p-lg rounded-xl flex flex-col justify-between aspect-square">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Partidas</span>
+<div class="mt-auto">
+<span class="font-display-lg text-display-lg text-primary">124</span>
+</div>
+</div>
+<!-- Games Won -->
+<div class="bg-primary-container/10 border border-primary/10 p-lg rounded-xl flex flex-col justify-between aspect-square">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Victorias</span>
+<div class="mt-auto">
+<span class="font-display-lg text-display-lg text-primary">98</span>
+<p class="font-label-sm text-label-sm text-primary/60">79% de éxito</p>
+</div>
+</div>
+<!-- Streak & Times (Horizontal Cards) -->
+<div class="col-span-2 bg-surface-container-low p-lg rounded-xl border border-outline-variant/30">
+<div class="flex justify-between items-center mb-md">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Racha actual</span>
+<span class="font-title-md text-title-md text-secondary">12 días</span>
+</div>
+<span class="material-symbols-outlined text-secondary" data-icon="local_fire_department" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+</div>
+<div class="h-[1px] bg-outline-variant w-full mb-md"></div>
+<div class="flex justify-between gap-lg">
+<div class="flex-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest block mb-xs">Mejor tiempo</span>
+<span class="font-title-md text-title-md text-primary">04:12</span>
+</div>
+<div class="flex-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest block mb-xs">Promedio</span>
+<span class="font-title-md text-title-md text-primary">07:45</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Weekly Progress Chart Section -->
+<section class="mb-xl">
+<div class="flex items-center justify-between mb-lg">
+<h3 class="font-title-md text-title-md text-on-surface">Actividad semanal</h3>
+<div class="flex gap-sm">
+<div class="flex items-center gap-base">
+<div class="w-2 h-2 rounded-full bg-chart-blue"></div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Resueltos</span>
+</div>
+<div class="flex items-center gap-base">
+<div class="w-2 h-2 rounded-full bg-chart-tan"></div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Intentos</span>
+</div>
+</div>
+</div>
+<div class="bg-surface p-lg rounded-xl border border-outline-variant/20 h-64 flex flex-col">
+<div class="flex-1 flex items-end justify-between gap-sm mb-md px-xs">
+<!-- Day Bar Group -->
+<div class="flex flex-col items-center flex-1 gap-base">
+<div class="w-full flex items-end justify-center gap-[2px] h-full">
+<div class="w-1.5 bg-chart-tan rounded-t-full chart-bar" style="height: 60%;"></div>
+<div class="w-1.5 bg-chart-blue rounded-t-full chart-bar" style="height: 40%;"></div>
+</div>
+<span class="font-label-sm text-label-sm text-outline">L</span>
+</div>
+<!-- Day Bar Group -->
+<div class="flex flex-col items-center flex-1 gap-base">
+<div class="w-full flex items-end justify-center gap-[2px] h-full">
+<div class="w-1.5 bg-chart-tan rounded-t-full chart-bar" style="height: 85%;"></div>
+<div class="w-1.5 bg-chart-blue rounded-t-full chart-bar" style="height: 70%;"></div>
+</div>
+<span class="font-label-sm text-label-sm text-outline">M</span>
+</div>
+<!-- Day Bar Group -->
+<div class="flex flex-col items-center flex-1 gap-base">
+<div class="w-full flex items-end justify-center gap-[2px] h-full">
+<div class="w-1.5 bg-chart-tan rounded-t-full chart-bar" style="height: 40%;"></div>
+<div class="w-1.5 bg-chart-blue rounded-t-full chart-bar" style="height: 30%;"></div>
+</div>
+<span class="font-label-sm text-label-sm text-outline">X</span>
+</div>
+<!-- Day Bar Group -->
+<div class="flex flex-col items-center flex-1 gap-base">
+<div class="w-full flex items-end justify-center gap-[2px] h-full">
+<div class="w-1.5 bg-chart-tan rounded-t-full chart-bar" style="height: 95%;"></div>
+<div class="w-1.5 bg-chart-blue rounded-t-full chart-bar" style="height: 90%;"></div>
+</div>
+<span class="font-label-sm text-label-sm text-outline">J</span>
+</div>
+<!-- Day Bar Group -->
+<div class="flex flex-col items-center flex-1 gap-base">
+<div class="w-full flex items-end justify-center gap-[2px] h-full">
+<div class="w-1.5 bg-chart-tan rounded-t-full chart-bar" style="height: 55%;"></div>
+<div class="w-1.5 bg-chart-blue rounded-t-full chart-bar" style="height: 45%;"></div>
+</div>
+<span class="font-label-sm text-label-sm text-outline">V</span>
+</div>
+<!-- Day Bar Group -->
+<div class="flex flex-col items-center flex-1 gap-base">
+<div class="w-full flex items-end justify-center gap-[2px] h-full">
+<div class="w-1.5 bg-chart-tan rounded-t-full chart-bar" style="height: 75%;"></div>
+<div class="w-1.5 bg-chart-blue rounded-t-full chart-bar" style="height: 65%;"></div>
+</div>
+<span class="font-label-sm text-label-sm text-outline">S</span>
+</div>
+<!-- Day Bar Group -->
+<div class="flex flex-col items-center flex-1 gap-base">
+<div class="w-full flex items-end justify-center gap-[2px] h-full">
+<div class="w-1.5 bg-chart-tan rounded-t-full chart-bar" style="height: 30%;"></div>
+<div class="w-1.5 bg-chart-blue rounded-t-full chart-bar" style="height: 10%;"></div>
+</div>
+<span class="font-label-sm text-label-sm text-outline">D</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Aesthetic Imagery Footer -->
+<div class="relative w-full aspect-video rounded-xl overflow-hidden mb-xl">
+<img alt="Zen focus image" class="w-full h-full object-cover" data-alt="A tranquil, minimalist close-up of a high-end linen notebook laying on a light oak wooden desk. Beside it sits a ceramic cup of warm tea and a classic wooden pencil. The scene is bathed in soft, natural morning light, creating a serene and focused atmosphere. The color palette is dominated by soft creams, beiges, and muted greys, perfectly reflecting a premium editorial and mindful aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZ-PiEHvpCuppwauE7wEQORv26gVe2Awu3DSsq5WR8hWn845xEV1qmUm7ftmE3MnI7l6_be9czcfxHQrT6DG2B2luf-Z_pMtu6NFLyz6ZIj-d1J_mMxvHcdn_czzyKrnwfLzB1oCjYBtlQ1ekjeHaaE0WR2gDLhGGAz8DH9rHY6Y_txRXwFmi0kSmwiJ1QEmUJ3g7-hVKW-bkLHTYEVCXtOpQ843Fix827MZbWoohqK_bDliCyR4QNcqris4nrQKc5NqwPUs9Is68"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent flex items-end p-lg">
+<p class="font-body-md text-on-surface-variant italic">"La simplicidad es la máxima sofisticación."</p>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Shell -->
+<nav class="fixed bottom-0 w-full z-50 pb-safe bg-background dark:bg-background border-t-[0.5px] border-outline-variant dark:border-outline flex justify-around items-center h-xxl px-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline hover:text-primary transition-colors active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed-dim relative after:content-[''] after:absolute after:-bottom-1 after:w-1 after:h-1 after:bg-primary after:rounded-full hover:text-primary transition-colors active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline hover:text-primary transition-colors active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</a>
+</nav>
+<script>
+        // Simple micro-interaction for chart bars
+        document.addEventListener('DOMContentLoaded', () => {
+            const bars = document.querySelectorAll('.chart-bar');
+            bars.forEach(bar => {
+                const targetHeight = bar.style.height;
+                bar.style.height = '0px';
+                setTimeout(() => {
+                    bar.style.height = targetHeight;
+                }, 300);
+            });
+        });
+    </script>
+</body></html>

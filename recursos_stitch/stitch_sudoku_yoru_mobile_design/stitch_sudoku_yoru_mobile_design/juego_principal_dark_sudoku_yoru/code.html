@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-container": "#fffbff",
+                    "surface-container": "#252323",
+                    "on-primary": "#ffffff",
+                    "surface-dim": "#1a1a1a",
+                    "on-tertiary-fixed-variant": "#4a4640",
+                    "on-secondary-fixed-variant": "#514535",
+                    "on-primary-fixed-variant": "#3e4758",
+                    "background": "#1E1E1E",
+                    "surface-tint": "#bec7dc",
+                    "tertiary": "#ccc6bd",
+                    "inverse-primary": "#535c6e",
+                    "tertiary-container": "#4a4640",
+                    "on-primary-container": "#fefcff",
+                    "secondary-fixed-dim": "#d5c4ae",
+                    "surface-container-high": "#2d2b2b",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed": "#131c2b",
+                    "secondary": "#d5c4ae",
+                    "error-container": "#93000a",
+                    "inverse-surface": "#fef8f7",
+                    "error": "#ffb4ab",
+                    "surface": "#252323",
+                    "tertiary-fixed": "#e8e1d8",
+                    "outline": "#8e9199",
+                    "inverse-on-surface": "#1d1b1b",
+                    "on-surface-variant": "#c5c6cd",
+                    "primary": "#bec7dc",
+                    "primary-fixed": "#dae2f8",
+                    "surface-bright": "#323030",
+                    "secondary-container": "#514535",
+                    "tertiary-fixed-dim": "#ccc6bd",
+                    "on-error": "#690005",
+                    "secondary-fixed": "#f2e0c9",
+                    "surface-container-lowest": "#0f0f0f",
+                    "surface-container-highest": "#363434",
+                    "on-surface": "#F5F1ED",
+                    "surface-variant": "#45474c",
+                    "on-error-container": "#ffdad6",
+                    "on-background": "#F5F1ED",
+                    "on-secondary-fixed": "#231a0c",
+                    "surface-container-low": "#211f1f",
+                    "on-secondary-container": "#f2e0c9",
+                    "primary-container": "#3e4758",
+                    "outline-variant": "#45474c",
+                    "on-tertiary": "#1e1b16",
+                    "primary-fixed-dim": "#bec7dc",
+                    "on-tertiary-fixed": "#1e1b16"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "xxl": "48px",
+                    "gutter": "12px",
+                    "lg": "24px",
+                    "base": "4px",
+                    "xl": "32px",
+                    "xs": "8px",
+                    "margin-mobile": "20px",
+                    "sm": "12px",
+                    "md": "16px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Playfair Display"],
+                    "label-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "grid-number": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "display-lg": ["Playfair Display"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Playfair Display"],
+                    "title-md": ["Playfair Display"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "grid-number": ["24px", {"lineHeight": "24px", "fontWeight": "300"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "display-lg": ["42px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "26px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "title-md": ["22px", {"lineHeight": "28px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #1E1E1E;
+            color: #F5F1ED;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .sudoku-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            aspect-ratio: 1 / 1;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            border: 1.5px solid #45474c;
+        }
+        .cell {
+            border: 0.5px solid #45474c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+        .cell-active {
+            background-color: rgba(190, 199, 220, 0.15);
+            box-shadow: inset 0 0 0 2px #bec7dc;
+        }
+        .cell-related {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+        .cell:nth-child(3n) { border-right-width: 1.5px; }
+        .cell:nth-child(9n) { border-right-width: 1.5px; }
+        .cell:nth-child(n+19):nth-child(-n+27),
+        .cell:nth-child(n+46):nth-child(-n+54) {
+            border-bottom-width: 1.5px;
+        }
+        .cell-fixed { font-weight: 600; color: #F5F1ED; }
+        .cell-input { color: #bec7dc; }
+        .cell-error { color: #ffb4ab; }
+        
+        .numpad-btn {
+            aspect-ratio: 1/1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .numpad-btn:active { transform: scale(0.9); }
+        
+        /* Notes layout */
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            width: 100%;
+            height: 100%;
+            padding: 2px;
+        }
+        .note-num {
+            font-size: 8px;
+            line-height: 1;
+            text-align: center;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="flex flex-col min-h-screen font-body-md overflow-hidden">
+<!-- Top App Bar (Shared Component Strategy) -->
+<header class="bg-background w-full top-0 z-50 flex justify-between items-center px-margin-mobile py-lg">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary" data-icon="grid_view">grid_view</span>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Sudoku Yoru</h1>
+</div>
+<div class="flex items-center gap-md">
+<button class="hover:opacity-80 transition-opacity active:scale-95 duration-200">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="eco">eco</span>
+</button>
+</div>
+</header>
+<!-- Discrete Ad Banner Placeholder -->
+<div class="px-margin-mobile mb-md">
+<div class="w-full h-12 bg-surface-container-low flex items-center justify-center border-y border-outline-variant/10">
+<span class="font-label-sm text-label-sm text-outline opacity-50 uppercase tracking-widest">Publicidad Discreta</span>
+</div>
+</div>
+<!-- Gameplay Header -->
+<div class="px-margin-mobile flex justify-between items-end mb-lg">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Nivel</span>
+<span class="font-title-md text-title-md text-on-surface">Maestro Zen</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Tiempo</span>
+<span class="font-title-md text-title-md text-primary font-mono tabular-nums">12:45</span>
+</div>
+<div class="flex gap-sm">
+<button class="w-10 h-10 rounded-full flex items-center justify-center bg-surface-container-high text-on-surface hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="pause">pause</span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center bg-surface-container-high text-on-surface hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
+</button>
+</div>
+</div>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col items-center justify-center px-margin-mobile pb-xxl">
+<!-- Sudoku Board -->
+<div class="sudoku-grid bg-surface-container shadow-2xl">
+<!-- Row 1 -->
+<div class="cell cell-fixed font-grid-number text-grid-number">5</div>
+<div class="cell font-grid-number text-grid-number">3</div>
+<div class="cell cell-related font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number">7</div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<!-- Row 2 -->
+<div class="cell font-grid-number text-grid-number">6</div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell cell-fixed font-grid-number text-grid-number">1</div>
+<div class="cell cell-fixed font-grid-number text-grid-number">9</div>
+<div class="cell cell-fixed font-grid-number text-grid-number">5</div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<!-- Row 3 -->
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell cell-fixed font-grid-number text-grid-number">9</div>
+<div class="cell cell-fixed font-grid-number text-grid-number">8</div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell cell-fixed font-grid-number text-grid-number">6</div>
+<div class="cell font-grid-number text-grid-number"></div>
+<!-- Row 4 -->
+<div class="cell cell-fixed font-grid-number text-grid-number">8</div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell cell-active font-grid-number text-grid-number text-primary">4</div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell cell-fixed font-grid-number text-grid-number">3</div>
+<!-- Row 5 (Center) -->
+<div class="cell font-grid-number text-grid-number">4</div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell cell-fixed font-grid-number text-grid-number">8</div>
+<div class="cell cell-related font-grid-number text-grid-number"></div>
+<div class="cell cell-fixed font-grid-number text-grid-number">3</div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number">1</div>
+<!-- Row 6 -->
+<div class="cell cell-fixed font-grid-number text-grid-number">7</div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number">2</div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell cell-fixed font-grid-number text-grid-number">6</div>
+<!-- Row 7 -->
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell cell-fixed font-grid-number text-grid-number">6</div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell cell-fixed font-grid-number text-grid-number">2</div>
+<div class="cell cell-fixed font-grid-number text-grid-number">8</div>
+<div class="cell font-grid-number text-grid-number"></div>
+<!-- Row 8 -->
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell cell-fixed font-grid-number text-grid-number">4</div>
+<div class="cell cell-fixed font-grid-number text-grid-number">1</div>
+<div class="cell cell-fixed font-grid-number text-grid-number">9</div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell cell-fixed font-grid-number text-grid-number">5</div>
+<!-- Row 9 -->
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell cell-fixed font-grid-number text-grid-number">8</div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell font-grid-number text-grid-number"></div>
+<div class="cell cell-fixed font-grid-number text-grid-number">7</div>
+<div class="cell cell-fixed font-grid-number text-grid-number">9</div>
+</div>
+<!-- Toolbar Controls -->
+<div class="w-full flex justify-between items-center mt-xl max-w-[500px]">
+<button class="flex flex-col items-center gap-xs group">
+<div class="w-12 h-12 rounded-xl flex items-center justify-center bg-surface-container-high group-active:scale-90 transition-all border border-outline-variant/20">
+<span class="material-symbols-outlined text-primary" data-icon="undo">undo</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline group-hover:text-on-surface transition-colors">Deshacer</span>
+</button>
+<button class="flex flex-col items-center gap-xs group">
+<div class="w-12 h-12 rounded-xl flex items-center justify-center bg-surface-container-high group-active:scale-90 transition-all border border-outline-variant/20">
+<span class="material-symbols-outlined text-primary" data-icon="ink_eraser">ink_eraser</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline group-hover:text-on-surface transition-colors">Borrar</span>
+</button>
+<button class="flex flex-col items-center gap-xs group">
+<div class="w-12 h-12 rounded-xl flex items-center justify-center bg-primary-container group-active:scale-90 transition-all border border-primary/30 relative">
+<span class="material-symbols-outlined text-on-primary-container" data-icon="edit">edit</span>
+<div class="absolute -top-1 -right-1 px-1 bg-primary text-background text-[8px] font-bold rounded-sm uppercase">On</div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface transition-colors">Notas</span>
+</button>
+<button class="flex flex-col items-center gap-xs group">
+<div class="w-12 h-12 rounded-xl flex items-center justify-center bg-surface-container-high group-active:scale-90 transition-all border border-outline-variant/20">
+<span class="material-symbols-outlined text-primary" data-icon="lightbulb">lightbulb</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline group-hover:text-on-surface transition-colors">Pista</span>
+</button>
+</div>
+<!-- Numeric Keypad -->
+<div class="w-full grid grid-cols-9 gap-gutter mt-xl max-w-[500px]">
+<button class="numpad-btn bg-surface-container-high hover:bg-surface-variant text-on-surface font-grid-number text-grid-number">1</button>
+<button class="numpad-btn bg-surface-container-high hover:bg-surface-variant text-on-surface font-grid-number text-grid-number">2</button>
+<button class="numpad-btn bg-surface-container-high hover:bg-surface-variant text-on-surface font-grid-number text-grid-number">3</button>
+<button class="numpad-btn bg-primary text-background font-grid-number text-grid-number">4</button>
+<button class="numpad-btn bg-surface-container-high hover:bg-surface-variant text-on-surface font-grid-number text-grid-number">5</button>
+<button class="numpad-btn bg-surface-container-high hover:bg-surface-variant text-on-surface font-grid-number text-grid-number">6</button>
+<button class="numpad-btn bg-surface-container-high hover:bg-surface-variant text-on-surface font-grid-number text-grid-number">7</button>
+<button class="numpad-btn bg-surface-container-high hover:bg-surface-variant text-on-surface font-grid-number text-grid-number">8</button>
+<button class="numpad-btn bg-surface-container-high hover:bg-surface-variant text-on-surface font-grid-number text-grid-number">9</button>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Shared Component Strategy) -->
+<nav class="bg-background fixed bottom-0 w-full z-50 pb-safe border-t-[0.5px] border-outline-variant/20 flex justify-around items-center h-xxl px-xl">
+<a class="flex flex-col items-center justify-center text-primary relative after:content-[''] after:absolute after:-bottom-1 after:w-1 after:h-1 after:bg-primary after:rounded-full active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</a>
+</nav>
+<script>
+        // Simple click interaction for Sudoku Grid
+        const cells = document.querySelectorAll('.cell');
+        cells.forEach(cell => {
+            cell.addEventListener('click', () => {
+                cells.forEach(c => c.classList.remove('cell-active'));
+                cell.classList.add('cell-active');
+                
+                // Subtle haptic-like effect for mobile
+                if (window.navigator.vibrate) {
+                    window.navigator.vibrate(5);
+                }
+            });
+        });
+
+        // Numpad interaction
+        const numButtons = document.querySelectorAll('.numpad-btn');
+        numButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const activeCell = document.querySelector('.cell-active');
+                if (activeCell && !activeCell.classList.contains('cell-fixed')) {
+                    activeCell.textContent = btn.textContent;
+                    activeCell.classList.add('cell-input');
+                    
+                    // Simple feedback pulse
+                    activeCell.animate([
+                        { transform: 'scale(1)' },
+                        { transform: 'scale(1.1)' },
+                        { transform: 'scale(1)' }
+                    ], { duration: 150 });
+                }
+            });
+        });
+    </script>
+</body></html>

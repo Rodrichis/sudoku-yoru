@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "RZ Base App",
-    "slug": "rz-base-app",
+    "name": "Sudoku Yoru",
+    "slug": "sudoku-yoru",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "rzbaseapp",
-    "userInterfaceStyle": "light",
+    "scheme": "sudokuyoru",
+    "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true
@@ -38,7 +38,8 @@
           "backgroundColor": "#f7f1e3"
         }
       ],
-      "expo-font"
+      "expo-font",
+      "expo-audio"
     ],
     "experiments": {
       "typedRoutes": true,
