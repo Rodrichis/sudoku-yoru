@@ -79,42 +79,48 @@ export default function HomeScreen() {
           </Text>
 
           <View className="mt-12 w-full gap-3">
-            <Pressable
-              disabled={!puedeContinuar}
-              onPress={() => router.push("/(app)/juego")}
-              style={{
-                backgroundColor: puedeContinuar
-                  ? branding.colores.primario
-                  : branding.colores.bordeSuave,
-                borderRadius: 6,
-                flexDirection: "row",
-                justifyContent: "space-between",
-                paddingHorizontal: 20,
-                paddingVertical: 18,
-              }}
-            >
-              <Text
-                className="text-[15px] uppercase tracking-[1.2px]"
-                style={{
-                  color: branding.colores.textoInvertido,
-                  fontFamily: branding.tipografia.cuerpoSemi,
-                }}
-              >
-                {textos.sudoku.home.continuar}
-              </Text>
-              <Ionicons color={branding.colores.textoInvertido} name="play-outline" size={22} />
-            </Pressable>
+            {puedeContinuar ? (
+              <>
+                <Pressable
+                  onPress={() => router.replace("/(app)/juego")}
+                  style={{
+                    backgroundColor: branding.colores.primario,
+                    borderRadius: 6,
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    paddingHorizontal: 20,
+                    paddingVertical: 18,
+                  }}
+                >
+                  <Text
+                    className="text-[15px] uppercase tracking-[1.2px]"
+                    style={{
+                      color: branding.colores.textoInvertido,
+                      fontFamily: branding.tipografia.cuerpoSemi,
+                    }}
+                  >
+                    {textos.sudoku.home.continuar}
+                  </Text>
+                  <Ionicons color={branding.colores.textoInvertido} name="play-outline" size={22} />
+                </Pressable>
 
-            <Text
-              className="text-center text-[12px]"
-              style={{ color: branding.colores.textoSuave, fontFamily: branding.tipografia.cuerpo }}
-            >
-              {puedeContinuar
-                ? `${SUDOKU_DIFICULTADES[resumen.dificultad].titulo} - ${formatearDuracion(
+                <Text
+                  className="text-center text-[12px]"
+                  style={{ color: branding.colores.textoSuave, fontFamily: branding.tipografia.cuerpo }}
+                >
+                  {`${SUDOKU_DIFICULTADES[resumen.dificultad].titulo} - ${formatearDuracion(
                     resumen.segundosTranscurridos
-                  )}`
-                : textos.sudoku.home.sinPartida}
-            </Text>
+                  )}`}
+                </Text>
+              </>
+            ) : (
+              <Text
+                className="text-center text-[12px]"
+                style={{ color: branding.colores.textoSuave, fontFamily: branding.tipografia.cuerpo }}
+              >
+                {textos.sudoku.home.sinPartida}
+              </Text>
+            )}
 
             <Pressable
               className="flex-row items-center gap-4 px-5 py-5"

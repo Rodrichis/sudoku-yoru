@@ -54,7 +54,9 @@ export default function SettingsScreen() {
             onPress={() => {
               const siguienteModoOscuro = !ajustes.modoOscuro;
               aplicarModoOscuro(siguienteModoOscuro);
-              void actualizarAjustes({ modoOscuro: siguienteModoOscuro });
+              void actualizarAjustes({ modoOscuro: siguienteModoOscuro }).catch(() => {
+                aplicarModoOscuro(ajustes.modoOscuro);
+              });
             }}
             titulo={textos.sudoku.settings.darkMode}
           />

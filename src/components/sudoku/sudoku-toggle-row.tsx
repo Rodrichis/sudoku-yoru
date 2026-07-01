@@ -2,6 +2,7 @@ import { Pressable, Text, View } from "react-native";
 import type { ReactNode } from "react";
 
 import { branding } from "@/src/config/branding";
+import { useTema } from "@/src/hooks/use-tema";
 
 interface SudokuToggleRowProps {
   activo: boolean;
@@ -18,12 +19,14 @@ export function SudokuToggleRow({
   onPress,
   titulo,
 }: SudokuToggleRowProps) {
+  const { colores } = useTema();
+
   return (
     <Pressable
       className="flex-row items-center justify-between px-5 py-4"
       onPress={onPress}
       style={{
-        borderBottomColor: branding.colores.bordeSuave,
+        borderBottomColor: colores.bordeSuave,
         borderBottomWidth: 0.5,
       }}
     >
@@ -33,7 +36,7 @@ export function SudokuToggleRow({
           <Text
             className="text-[17px]"
             style={{
-              color: branding.colores.textoPrimario,
+              color: colores.textoPrimario,
               fontFamily: branding.tipografia.cuerpo,
             }}
           >
@@ -43,7 +46,7 @@ export function SudokuToggleRow({
             <Text
               className="mt-1 text-sm"
               style={{
-                color: branding.colores.textoSuave,
+                color: colores.textoSuave,
                 fontFamily: branding.tipografia.cuerpo,
               }}
             >
@@ -55,13 +58,13 @@ export function SudokuToggleRow({
 
       <View
         className="h-8 w-14 justify-center rounded-full px-1"
-        style={{ backgroundColor: activo ? branding.colores.primario : branding.colores.superficieOscura }}
+        style={{ backgroundColor: activo ? colores.primario : colores.superficieOscura }}
       >
         <View
           className="h-6 w-6 rounded-full"
           style={{
             alignSelf: activo ? "flex-end" : "flex-start",
-            backgroundColor: branding.colores.textoInvertido,
+            backgroundColor: colores.textoInvertido,
           }}
         />
       </View>

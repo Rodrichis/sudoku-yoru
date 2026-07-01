@@ -23,7 +23,7 @@ export function SudokuPage({
       contentContainerStyle={{
         alignItems: "center",
         flexGrow: 1,
-        paddingBottom: conNavegacion ? branding.layout.tabBarAltura + 18 : 28,
+        paddingBottom: conNavegacion ? branding.layout.tabBarAltura + 54 : 28,
         width: "100%",
       }}
       showsVerticalScrollIndicator={false}
@@ -36,7 +36,7 @@ export function SudokuPage({
       style={{
         alignItems: "center",
         flex: 1,
-        paddingBottom: conNavegacion ? branding.layout.tabBarAltura + 12 : 16,
+        paddingBottom: conNavegacion ? branding.layout.tabBarAltura + 42 : 16,
         width: "100%",
       }}
     >
@@ -89,7 +89,9 @@ export function SudokuPage({
             </View>
           ))}
         </View>
-        <View style={{ flex: 1, zIndex: 1 }}>{contenido}</View>
+        <View key={modoOscuro ? "oscuro" : "claro"} style={{ flex: 1, width: "100%", zIndex: 1 }}>
+          {contenido}
+        </View>
         {conNavegacion ? <SudokuBottomNav /> : null}
       </View>
     </SafeAreaView>

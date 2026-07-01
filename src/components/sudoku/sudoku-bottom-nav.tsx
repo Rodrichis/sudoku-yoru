@@ -4,6 +4,7 @@ import { usePathname, useRouter } from "expo-router";
 import type { Href } from "expo-router";
 
 import { branding } from "@/src/config/branding";
+import { useTema } from "@/src/hooks/use-tema";
 
 function esRutaInicio(pathname: string) {
   return pathname === "/" || pathname === "/juego" || pathname === "/nueva-partida";
@@ -12,6 +13,7 @@ function esRutaInicio(pathname: string) {
 export function SudokuBottomNav() {
   const pathname = usePathname();
   const router = useRouter();
+  const { colores, modoOscuro } = useTema();
 
   const items = [
     {
@@ -36,32 +38,59 @@ export function SudokuBottomNav() {
 
   return (
     <View
-      className="absolute bottom-0 left-0 right-0 flex-row items-center justify-around px-10 pb-3 pt-2"
       style={{
-        backgroundColor: branding.colores.fondoApp,
-        borderTopColor: branding.colores.bordeSuave,
-        borderTopWidth: 0.5,
+        alignItems: "center",
+        backgroundColor: colores.fondoElevado,
+        borderColor: colores.bordeSuave,
+        borderRadius: 999,
+        borderWidth: 0.8,
+        bottom: 12,
+        elevation: 24,
+        flexDirection: "row",
+        justifyContent: "space-around",
+        left: 20,
         minHeight: branding.layout.tabBarAltura,
+        paddingHorizontal: 10,
+        position: "absolute",
+        right: 20,
+        shadowColor: modoOscuro ? "#000000" : "#9a8f86",
+        shadowOffset: { height: 10, width: 0 },
+        shadowOpacity: modoOscuro ? 0.36 : 0.16,
+        shadowRadius: 18,
+        zIndex: 30,
       }}
     >
       {items.map((item) => (
         <Pressable
           key={item.key}
-          className="items-center justify-center px-3 py-2"
-          onPress={() => router.replace(item.ruta)}
+          hitSlop={10}
+          onPress={() => {
+            if (!item.activo) {
+              router.replace(item.ruta);
+            }
+          }}
+          style={{
+            alignItems: "center",
+            backgroundColor: item.activo ? colores.primario : "transparent",
+            borderRadius: 999,
+            height: 48,
+            justifyContent: "center",
+            width: 76,
+          }}
         >
           <Ionicons
-            color={item.activo ? branding.colores.primario : branding.colores.textoSuave}
+            color={item.activo ? colores.textoInvertido : colores.textoSuave}
             name={item.icono}
             size={24}
           />
           <View
             style={{
-              backgroundColor: item.activo ? branding.colores.primario : "transparent",
+              backgroundColor: item.activo ? colores.textoInvertido : "transparent",
               borderRadius: 999,
               height: 4,
-              marginTop: 4,
-              width: 4,
+              marginTop: 3,
+              opacity: item.activo ? 0.82 : 0,
+              width: 16,
             }}
           />
         </Pressable>

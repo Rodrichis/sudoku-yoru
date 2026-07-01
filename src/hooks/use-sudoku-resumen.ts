@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
+import { useFocusEffect } from "expo-router";
 
 import { cargarSudokuResumenPartida } from "@/src/services/sudoku-storage";
 import type { SudokuResumenPartida } from "@/src/types/sudoku";
@@ -28,9 +29,11 @@ export function useSudokuResumen(perfilId: string | null) {
     setCargando(false);
   }, [perfilId]);
 
-  useEffect(() => {
-    void refrescar();
-  }, [refrescar]);
+  useFocusEffect(
+    useCallback(() => {
+      void refrescar();
+    }, [refrescar])
+  );
 
   return {
     cargando,
