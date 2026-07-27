@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, Platform, Text, View } from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { PropsWithChildren, ReactNode } from "react";
 
@@ -55,13 +55,18 @@ export function Pantalla({ aviso, cabecera, children }: PantallaProps) {
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         style={{ flex: 1 }}
       >
-        <View
-          style={{
+        <ScrollView
+          contentContainerStyle={{
             alignItems: "center",
-            flex: 1,
+            flexGrow: 1,
             justifyContent: "center",
             paddingHorizontal: 16,
             paddingVertical: 24,
+          }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          style={{
+            flex: 1,
             width: "100%",
             zIndex: 1,
           }}
@@ -95,7 +100,7 @@ export function Pantalla({ aviso, cabecera, children }: PantallaProps) {
 
             {children}
           </View>
-        </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

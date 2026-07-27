@@ -121,8 +121,16 @@ export function obtenerHoyIso() {
   return new Date().toISOString();
 }
 
+export function obtenerClaveDiaLocal(fecha = new Date()) {
+  const anio = fecha.getFullYear();
+  const mes = String(fecha.getMonth() + 1).padStart(2, "0");
+  const dia = String(fecha.getDate()).padStart(2, "0");
+
+  return `${anio}-${mes}-${dia}`;
+}
+
 export function obtenerClaveDiaActual() {
-  return obtenerHoyIso().slice(0, 10);
+  return obtenerClaveDiaLocal();
 }
 
 export function construirActividadSemanal(
@@ -130,14 +138,30 @@ export function construirActividadSemanal(
   historialTiempos: SudokuTiempoRegistro[]
 ) {
   const mapaActividad = new Map(actividadDiaria.map((item) => [item.fecha, item]));
-  const mapaTiempos = new Map(historialTiempos.map((item) => [item.fecha.slice(0, 10), item]));
+  const mapaTiempos = new Map<string, SudokuTiempoRegistro>();
+
+  for (const item of historialTiempos) {
+    const fecha = new Date(item.fecha);
+
+    if (Number.isNaN(fecha.getTime())) {
+      continue;
+    }
+
+    const clave = obtenerClaveDiaLocal(fecha);
+    const actual = mapaTiempos.get(clave);
+
+    if (!actual || item.duracionSegundos < actual.duracionSegundos) {
+      mapaTiempos.set(clave, item);
+    }
+  }
+
   const dias = ["D", "L", "M", "X", "J", "V", "S"];
 
   return Array.from({ length: 7 }, (_, indice) => {
     const fecha = new Date();
     fecha.setHours(0, 0, 0, 0);
     fecha.setDate(fecha.getDate() - (6 - indice));
-    const clave = fecha.toISOString().slice(0, 10);
+    const clave = obtenerClaveDiaLocal(fecha);
     const actividad = mapaActividad.get(clave);
 
     return {

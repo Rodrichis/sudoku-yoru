@@ -73,6 +73,9 @@ export const textosEn: Textos = {
     revenuecat: "RevenueCat pending",
   },
   sudoku: {
+    navegacion: {
+      inicio: "Home",
+    },
     juego: {
       anuncio: "Ad space",
       borrar: "Erase",
@@ -92,6 +95,7 @@ export const textosEn: Textos = {
     home: {
       ajustes: "Settings",
       continuar: "Continue game",
+      errorPartida: "We could not read your saved game.",
       estadoCuenta: "Current session",
       estadoInvitado: "Guest mode",
       estadoRegistrado: "Signed-in account",
@@ -108,12 +112,14 @@ export const textosEn: Textos = {
       cerrarSesionInvitado: "Leave guest mode",
       darkMode: "Dark mode",
       eliminarPublicidad: "Remove ads",
+      errorEnlace: "The link could not be opened.",
       experiencia: "Game experience",
       hechoConCalma: "Made with calm.",
       informacion: "Information",
-      placeholderPago: "Premium placeholder ready to connect to RevenueCat when needed.",
+      placeholderPago: "The option to remove ads will be available soon.",
       politicaPrivacidad: "Privacy policy",
-      politicaPrivacidadTexto: "Placeholder ready to link your real privacy policy in the next iteration.",
+      politicaPrivacidadPendiente: "The link will be added before release.",
+      politicaPrivacidadTexto: "See how account and device data is handled.",
       sonidos: "Sounds",
       suscripcion: "Subscription",
       vibracion: "Vibration",
@@ -121,6 +127,7 @@ export const textosEn: Textos = {
     },
     stats: {
       actividadSemanal: "Weekly activity",
+      errorCarga: "We could not load your stats.",
       intentos: "Attempts",
       mejorTiempo: "Best time",
       partidas: "Games",
@@ -129,11 +136,15 @@ export const textosEn: Textos = {
       progresoTitulo: "Your progress",
       quote: "\"Simplicity is the ultimate sophistication.\"",
       rachaActual: "Current streak",
+      reintentar: "Try again",
       resueltos: "Solved",
       victorias: "Victories",
     },
     nuevaPartida: {
+      confirmacionTexto: "Your current game will be marked as abandoned and replaced.",
+      confirmacionTitulo: "Start another game?",
       iniciar: "Start",
+      reemplazar: "Start",
       subtitulo: "Choose the difficulty",
       titulo: "New game",
     },

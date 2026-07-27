@@ -64,9 +64,5 @@ export function TemaProvider({ children }: PropsWithChildren) {
     [cargandoTema, modoOscuro]
   );
 
-  if (cargandoTema) {
-    return null;
-  }
-
   return <TemaContexto.Provider value={valor}>{children}</TemaContexto.Provider>;
 }

@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import { Pressable, Text, View } from "react-native";
 
@@ -15,7 +15,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const textos = useTextos();
   const { perfilId } = useSesion();
-  const { cargando: cargandoResumen, resumen } = useSudokuResumen(perfilId);
+  const { cargando: cargandoResumen, error, resumen } = useSudokuResumen(perfilId);
 
   if (cargandoResumen) {
     return <PantallaCarga texto={textos.general.cargando} />;
@@ -79,6 +79,19 @@ export default function HomeScreen() {
           </Text>
 
           <View className="mt-12 w-full gap-3">
+            {error ? (
+              <Text
+                accessibilityLiveRegion="polite"
+                className="text-center text-[12px]"
+                style={{
+                  color: branding.colores.error,
+                  fontFamily: branding.tipografia.cuerpoMedio,
+                }}
+              >
+                {textos.sudoku.home.errorPartida}
+              </Text>
+            ) : null}
+
             {puedeContinuar ? (
               <>
                 <Pressable

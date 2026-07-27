@@ -1,6 +1,6 @@
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useMemo } from "react";
-import { Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 
 import { SudokuPage } from "@/src/components/sudoku/sudoku-page";
 import { SudokuPanel } from "@/src/components/sudoku/sudoku-panel";
@@ -17,7 +17,7 @@ import { construirActividadSemanal, formatearDuracion } from "@/src/utils/sudoku
 export default function StatsScreen() {
   const textos = useTextos();
   const { perfilId } = useSesion();
-  const { cargando, estadisticas } = useSudokuEstadisticas(perfilId);
+  const { cargando, error, estadisticas, refrescar } = useSudokuEstadisticas(perfilId);
 
   const actividad = useMemo(() => {
     if (!estadisticas) {
@@ -27,8 +27,40 @@ export default function StatsScreen() {
     return construirActividadSemanal(estadisticas.actividadDiaria, estadisticas.historialTiempos);
   }, [estadisticas]);
 
-  if (cargando || !estadisticas) {
+  if (cargando) {
     return <PantallaCarga texto={textos.general.cargando} />;
+  }
+
+  if (!estadisticas) {
+    return (
+      <SudokuPage>
+        <View className="flex-1 justify-center px-5" style={{ maxWidth: 360, width: "100%" }}>
+          <SudokuPanel>
+            <Text
+              accessibilityLiveRegion="polite"
+              className="text-center text-base leading-7"
+              style={{ color: branding.colores.error, fontFamily: branding.tipografia.cuerpo }}
+            >
+              {error ?? textos.sudoku.stats.errorCarga}
+            </Text>
+            <Pressable
+              accessibilityRole="button"
+              className="mt-5 items-center"
+              onPress={() => {
+                void refrescar();
+              }}
+            >
+              <Text
+                className="text-sm uppercase tracking-[1.4px]"
+                style={{ color: branding.colores.primario, fontFamily: branding.tipografia.cuerpoSemi }}
+              >
+                {textos.sudoku.stats.reintentar}
+              </Text>
+            </Pressable>
+          </SudokuPanel>
+        </View>
+      </SudokuPage>
+    );
   }
 
   const promedio = obtenerTiempoPromedioSudoku(estadisticas);

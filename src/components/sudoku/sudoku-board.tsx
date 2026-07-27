@@ -73,6 +73,14 @@ export function SudokuBoard({
           return (
             <Pressable
               key={indice}
+              accessibilityLabel={`Fila ${fila + 1}, columna ${columna + 1}, ${
+                celda.valor ?? "vacia"
+              }${celda.fija ? ", pista fija" : ""}`}
+              accessibilityRole="button"
+              accessibilityState={{
+                disabled: deshabilitado,
+                selected: esSeleccionada,
+              }}
               className="items-center justify-center"
               disabled={deshabilitado}
               onPress={() => onPressCelda(indice)}
@@ -96,8 +104,9 @@ export function SudokuBoard({
                       : esErronea
                         ? branding.colores.error
                         : branding.colores.primario,
-                    fontFamily: branding.tipografia.numeros,
-                    fontWeight: celda.fija ? "600" : "500",
+                    fontFamily: celda.fija
+                      ? branding.tipografia.cuerpoSemi
+                      : branding.tipografia.cuerpoMedio,
                   }}
                 >
                   {celda.valor}

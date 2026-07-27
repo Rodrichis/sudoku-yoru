@@ -40,14 +40,24 @@ export function NotificacionesProvider({ children }: PropsWithChildren) {
           setUltimaNotificacion(titulo);
         }
       },
-    }).then((cancelarSuscripcion) => {
-      if (!activa) {
-        cancelarSuscripcion();
-        return;
-      }
+    })
+      .then((cancelarSuscripcion) => {
+        if (!activa) {
+          cancelarSuscripcion();
+          return;
+        }
 
-      cancelar = cancelarSuscripcion;
-    });
+        cancelar = cancelarSuscripcion;
+      })
+      .catch((errorSuscripcion) => {
+        if (activa) {
+          setError(
+            errorSuscripcion instanceof Error
+              ? errorSuscripcion.message
+              : "No fue posible escuchar notificaciones."
+          );
+        }
+      });
 
     return () => {
       activa = false;
@@ -66,16 +76,31 @@ export function NotificacionesProvider({ children }: PropsWithChildren) {
 
     void (async () => {
       setRegistrando(true);
-      const resultado = await registrarDispositivoPush(usuarioFirebase.uid);
 
-      if (!activa) {
-        return;
+      try {
+        const resultado = await registrarDispositivoPush(usuarioFirebase.uid);
+
+        if (!activa) {
+          return;
+        }
+
+        setExpoPushToken(resultado.expoPushToken);
+        setPermiso(resultado.permiso);
+        setError(resultado.error ?? null);
+      } catch (errorRegistro) {
+        if (activa) {
+          setExpoPushToken(null);
+          setError(
+            errorRegistro instanceof Error
+              ? errorRegistro.message
+              : "No fue posible registrar las notificaciones."
+          );
+        }
+      } finally {
+        if (activa) {
+          setRegistrando(false);
+        }
       }
-
-      setExpoPushToken(resultado.expoPushToken);
-      setPermiso(resultado.permiso);
-      setError(resultado.error ?? null);
-      setRegistrando(false);
     })();
 
     return () => {

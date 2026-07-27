@@ -8,7 +8,7 @@ function aleatorioEntre(minimo: number, maximo: number) {
   return Math.floor(Math.random() * (maximo - minimo + 1)) + minimo;
 }
 
-export function generarPuzzleSudoku(dificultad: SudokuDificultad): SudokuPuzzleGenerado {
+function generarIntentoSudoku(dificultad: SudokuDificultad) {
   const solucion = generarSolucionSudoku();
   const pistas = [...solucion] as SudokuValor[];
   const configuracion = SUDOKU_DIFICULTADES[dificultad];
@@ -36,7 +36,35 @@ export function generarPuzzleSudoku(dificultad: SudokuDificultad): SudokuPuzzleG
   }
 
   return {
-    pistas,
-    solucion,
+    pistasActuales,
+    puzzle: {
+      pistas,
+      solucion,
+    } satisfies SudokuPuzzleGenerado,
   };
+}
+
+export function generarPuzzleSudoku(dificultad: SudokuDificultad): SudokuPuzzleGenerado {
+  const configuracion = SUDOKU_DIFICULTADES[dificultad];
+  const intentosMaximos =
+    dificultad === "experto" ? 10 : dificultad === "dificil" ? 5 : 2;
+  let mejorIntento: ReturnType<typeof generarIntentoSudoku> | null = null;
+
+  for (let intento = 0; intento < intentosMaximos; intento += 1) {
+    const resultado = generarIntentoSudoku(dificultad);
+
+    if (!mejorIntento || resultado.pistasActuales < mejorIntento.pistasActuales) {
+      mejorIntento = resultado;
+    }
+
+    if (resultado.pistasActuales <= configuracion.pistasMaximas) {
+      return resultado.puzzle;
+    }
+  }
+
+  if (!mejorIntento) {
+    throw new Error("No fue posible generar un puzzle Sudoku.");
+  }
+
+  return mejorIntento.puzzle;
 }

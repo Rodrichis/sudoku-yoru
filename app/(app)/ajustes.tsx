@@ -1,12 +1,14 @@
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import Constants from "expo-constants";
-import { Pressable, Text, View } from "react-native";
+import { Linking, Pressable, Text, View } from "react-native";
+import { useState } from "react";
 
 import { SudokuPage } from "@/src/components/sudoku/sudoku-page";
 import { SudokuPanel } from "@/src/components/sudoku/sudoku-panel";
 import { SudokuToggleRow } from "@/src/components/sudoku/sudoku-toggle-row";
 import { PantallaCarga } from "@/src/components/ui/pantalla-carga";
 import { branding } from "@/src/config/branding";
+import { env } from "@/src/config/env";
 import { useSesion } from "@/src/hooks/use-sesion";
 import { useSudokuAjustes } from "@/src/hooks/use-sudoku-ajustes";
 import { useTema } from "@/src/hooks/use-tema";
@@ -17,7 +19,10 @@ export default function SettingsScreen() {
   const { cargando, ajustes, actualizarAjustes } = useSudokuAjustes();
   const { esInvitado, salirSesionActual } = useSesion();
   const { aplicarModoOscuro } = useTema();
+  const [errorEnlace, setErrorEnlace] = useState<string | null>(null);
   const version = Constants.expoConfig?.version ?? "1.0.0";
+  const politicaPrivacidadUrl = env.EXPO_PUBLIC_PRIVACY_POLICY_URL.trim();
+  const politicaDisponible = politicaPrivacidadUrl.startsWith("https://");
 
   if (cargando) {
     return <PantallaCarga texto={textos.general.cargando} />;
@@ -94,11 +99,15 @@ export default function SettingsScreen() {
         </Text>
 
         <Pressable
+          accessibilityRole="button"
+          accessibilityState={{ disabled: true }}
           className="flex-row items-center justify-between px-5 py-5"
+          disabled
           onPress={() => undefined}
           style={{
             backgroundColor: branding.colores.primario,
             borderRadius: branding.layout.radioTarjeta,
+            opacity: 0.68,
           }}
         >
           <View className="flex-row items-center gap-3">
@@ -128,7 +137,18 @@ export default function SettingsScreen() {
         </Text>
 
         <SudokuPanel>
-          <Pressable className="flex-row items-center justify-between py-2">
+          <Pressable
+            accessibilityRole="link"
+            accessibilityState={{ disabled: !politicaDisponible }}
+            className="flex-row items-center justify-between py-2"
+            disabled={!politicaDisponible}
+            onPress={() => {
+              setErrorEnlace(null);
+              void Linking.openURL(politicaPrivacidadUrl).catch(() => {
+                setErrorEnlace(textos.sudoku.settings.errorEnlace);
+              });
+            }}
+          >
             <View className="flex-1 pr-4">
               <Text
                 className="text-[17px]"
@@ -140,18 +160,32 @@ export default function SettingsScreen() {
                 className="mt-2 text-sm leading-6"
                 style={{ color: branding.colores.textoSuave, fontFamily: branding.tipografia.cuerpo }}
               >
-                {textos.sudoku.settings.politicaPrivacidadTexto}
+                {politicaDisponible
+                  ? textos.sudoku.settings.politicaPrivacidadTexto
+                  : textos.sudoku.settings.politicaPrivacidadPendiente}
               </Text>
             </View>
-            <Ionicons color={branding.colores.textoSuave} name="chevron-forward-outline" size={20} />
+            {politicaDisponible ? (
+              <Ionicons color={branding.colores.textoSuave} name="chevron-forward-outline" size={20} />
+            ) : null}
           </Pressable>
+
+          {errorEnlace ? (
+            <Text
+              accessibilityLiveRegion="polite"
+              className="mt-3 text-sm"
+              style={{ color: branding.colores.error, fontFamily: branding.tipografia.cuerpoMedio }}
+            >
+              {errorEnlace}
+            </Text>
+          ) : null}
 
           <View
             className="my-4"
             style={{ borderBottomColor: branding.colores.bordeSuave, borderBottomWidth: 0.6 }}
           />
 
-          <Pressable className="flex-row items-center justify-between py-2">
+          <View className="flex-row items-center justify-between py-2">
             <View className="flex-1 pr-4">
               <Text
                 className="text-[17px]"
@@ -167,7 +201,7 @@ export default function SettingsScreen() {
               </Text>
             </View>
             <Ionicons color={branding.colores.textoSuave} name="information-circle-outline" size={20} />
-          </Pressable>
+          </View>
         </SudokuPanel>
 
         <Pressable

@@ -2,17 +2,13 @@ import "../global.css";
 import "react-native-gesture-handler";
 import "react-native-reanimated";
 
-import {
-  Inter_300Light,
-  Inter_400Regular,
-  Inter_500Medium,
-  Inter_600SemiBold,
-} from "@expo-google-fonts/inter";
-import {
-  PlayfairDisplay_500Medium,
-  PlayfairDisplay_600SemiBold,
-  PlayfairDisplay_700Bold,
-} from "@expo-google-fonts/playfair-display";
+import { Inter_300Light } from "@expo-google-fonts/inter/300Light";
+import { Inter_400Regular } from "@expo-google-fonts/inter/400Regular";
+import { Inter_500Medium } from "@expo-google-fonts/inter/500Medium";
+import { Inter_600SemiBold } from "@expo-google-fonts/inter/600SemiBold";
+import { PlayfairDisplay_500Medium } from "@expo-google-fonts/playfair-display/500Medium";
+import { PlayfairDisplay_600SemiBold } from "@expo-google-fonts/playfair-display/600SemiBold";
+import { PlayfairDisplay_700Bold } from "@expo-google-fonts/playfair-display/700Bold";
 import { useFonts } from "expo-font";
 import * as WebBrowser from "expo-web-browser";
 import { Stack } from "expo-router";
@@ -49,7 +45,7 @@ function AppShell() {
 }
 
 export default function RootLayout() {
-  const [fontsLoaded] = useFonts({
+  const [fontsLoaded, fontError] = useFonts({
     Inter_300Light,
     Inter_400Regular,
     Inter_500Medium,
@@ -59,7 +55,7 @@ export default function RootLayout() {
     PlayfairDisplay_700Bold,
   });
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded && !fontError) {
     return null;
   }
 

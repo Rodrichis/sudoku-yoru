@@ -3,6 +3,7 @@ declare namespace NodeJS {
     EXPO_PUBLIC_APP_NAME?: string;
     EXPO_PUBLIC_APP_SCHEME?: string;
     EXPO_PUBLIC_APP_BASE_URL?: string;
+    EXPO_PUBLIC_PRIVACY_POLICY_URL?: string;
     EXPO_PUBLIC_FIREBASE_API_KEY?: string;
     EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN?: string;
     EXPO_PUBLIC_FIREBASE_PROJECT_ID?: string;

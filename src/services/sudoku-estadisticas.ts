@@ -73,6 +73,10 @@ export function registrarVictoriaSudoku(
     id: string;
   }
 ) {
+  if (estadisticas.historialTiempos.some((item) => item.id === datos.id)) {
+    return estadisticas;
+  }
+
   const historialItem: SudokuTiempoRegistro = {
     dificultad: datos.dificultad,
     duracionSegundos: datos.duracionSegundos,

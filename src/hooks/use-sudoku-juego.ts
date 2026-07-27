@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { AppState } from "react-native";
 
 import { registrarAbandonoSudoku, registrarIntentoSudoku, registrarVictoriaSudoku } from "@/src/services/sudoku-estadisticas";
 import { crearSudokuPartida } from "@/src/services/sudoku-partidas";
@@ -39,6 +40,25 @@ function actualizarCelda(celdas: SudokuCelda[], indice: number, celda: SudokuCel
   return celdas.map((actual, cursor) => (cursor === indice ? celda : actual));
 }
 
+function limpiarNotaRelacionada(
+  celdas: SudokuCelda[],
+  indice: number,
+  numero: SudokuNumero
+) {
+  const relacionados = new Set(obtenerIndicesRelacionadosSudoku(indice));
+
+  return celdas.map((celda, cursor) => {
+    if (!relacionados.has(cursor) || !celda.notas.includes(numero)) {
+      return celda;
+    }
+
+    return {
+      ...celda,
+      notas: celda.notas.filter((nota) => nota !== numero),
+    };
+  });
+}
+
 export function useSudokuJuego({
   ajustes,
   dificultadInicial = null,
@@ -50,6 +70,7 @@ export function useSudokuJuego({
   const [error, setError] = useState<string | null>(null);
   const [estadisticas, setEstadisticas] = useState<SudokuEstadisticas | null>(null);
   const [partida, setPartida] = useState<SudokuPartida | null>(null);
+  const estadisticasRef = useRef<SudokuEstadisticas | null>(null);
   const partidaRef = useRef<SudokuPartida | null>(null);
 
   function fijarPartida(siguiente: SudokuPartida | null) {
@@ -57,21 +78,28 @@ export function useSudokuJuego({
     setPartida(siguiente);
   }
 
+  function fijarEstadisticas(siguientes: SudokuEstadisticas | null) {
+    estadisticasRef.current = siguientes;
+    setEstadisticas(siguientes);
+  }
+
   const persistirEstadisticas = useCallback(async (siguientes: SudokuEstadisticas) => {
     if (!perfilId) {
       return;
     }
 
-    setEstadisticas(siguientes);
+    fijarEstadisticas(siguientes);
     await guardarSudokuEstadisticas(perfilId, siguientes);
   }, [perfilId]);
 
   const registrarVictoria = useCallback(async (partidaGanada: SudokuPartida) => {
-    if (!estadisticas) {
+    const estadisticasActuales = estadisticasRef.current;
+
+    if (!estadisticasActuales) {
       return;
     }
 
-    const siguientes = registrarVictoriaSudoku(estadisticas, {
+    const siguientes = registrarVictoriaSudoku(estadisticasActuales, {
       dificultad: partidaGanada.dificultad,
       duracionSegundos: partidaGanada.segundosTranscurridos,
       id: partidaGanada.id,
@@ -80,7 +108,7 @@ export function useSudokuJuego({
     await persistirEstadisticas(siguientes);
     await eliminarSudokuPartida(perfilId ?? "guest");
     setCompletadaReciente(true);
-  }, [estadisticas, perfilId, persistirEstadisticas]);
+  }, [perfilId, persistirEstadisticas]);
 
   function cerrarCelebracion() {
     setCompletadaReciente(false);
@@ -95,11 +123,16 @@ export function useSudokuJuego({
   }, [perfilId]);
 
   const aplicarCambio = useCallback(async (
-    construirSiguiente: (actual: SudokuPartida) => SudokuPartida | null
+    construirSiguiente: (actual: SudokuPartida) => SudokuPartida | null,
+    opciones: { permitirPausada?: boolean } = {}
   ) => {
     const actual = partidaRef.current;
 
-    if (!actual) {
+    if (
+      !actual ||
+      actual.finalizada ||
+      (actual.pausada && !opciones.permitirPausada)
+    ) {
       return;
     }
 
@@ -110,24 +143,33 @@ export function useSudokuJuego({
     }
 
     const tableroActual = siguiente.celdas.map((celda) => celda.valor);
+    const resuelta = esSudokuResuelto(tableroActual, siguiente.solucion);
     const partidaFinal = {
       ...siguiente,
       actualizadaEl: obtenerHoyIso(),
-      finalizada: siguiente.finalizada || esSudokuResuelto(tableroActual, siguiente.solucion),
-      pausada:
-        siguiente.finalizada || esSudokuResuelto(tableroActual, siguiente.solucion)
-          ? false
-          : siguiente.pausada,
+      finalizada: siguiente.finalizada || resuelta,
+      pausada: siguiente.finalizada || resuelta ? false : siguiente.pausada,
     };
 
     fijarPartida(partidaFinal);
+    setError(null);
 
-    if (partidaFinal.finalizada && !actual.finalizada) {
-      await registrarVictoria(partidaFinal);
-      return;
+    try {
+      if (partidaFinal.finalizada && !actual.finalizada) {
+        // Persistir primero permite recuperar la victoria si falla el guardado de estadisticas.
+        await guardarPartidaActual(partidaFinal);
+        await registrarVictoria(partidaFinal);
+        return;
+      }
+
+      await guardarPartidaActual(partidaFinal);
+    } catch (errorGuardado) {
+      setError(
+        errorGuardado instanceof Error
+          ? errorGuardado.message
+          : "No se pudo guardar el progreso."
+      );
     }
-
-    await guardarPartidaActual(partidaFinal);
   }, [guardarPartidaActual, registrarVictoria]);
 
   const cargar = useCallback(async () => {
@@ -142,8 +184,19 @@ export function useSudokuJuego({
 
     try {
       let estadisticasActuales = await cargarSudokuEstadisticas(perfilId);
-      const partidaGuardada = await cargarSudokuPartida(perfilId);
+      let partidaGuardada = await cargarSudokuPartida(perfilId);
       let siguientePartida: SudokuPartida | null = null;
+
+      if (partidaGuardada?.finalizada) {
+        estadisticasActuales = registrarVictoriaSudoku(estadisticasActuales, {
+          dificultad: partidaGuardada.dificultad,
+          duracionSegundos: partidaGuardada.segundosTranscurridos,
+          id: partidaGuardada.id,
+        });
+        await guardarSudokuEstadisticas(perfilId, estadisticasActuales);
+        await eliminarSudokuPartida(perfilId);
+        partidaGuardada = null;
+      }
 
       if (forzarNuevaPartida && dificultadInicial) {
         if (partidaGuardada && !partidaGuardada.finalizada) {
@@ -165,7 +218,7 @@ export function useSudokuJuego({
         await persistirEstadisticas(estadisticasActuales);
       }
 
-      setEstadisticas(estadisticasActuales);
+      fijarEstadisticas(estadisticasActuales);
       fijarPartida(siguientePartida);
     } catch (errorCargado) {
       setError(errorCargado instanceof Error ? errorCargado.message : "No se pudo cargar la partida.");
@@ -202,11 +255,46 @@ export function useSudokuJuego({
       };
 
       fijarPartida(siguiente);
-      void guardarPartidaActual(siguiente);
+
+      if (siguiente.segundosTranscurridos % 5 === 0) {
+        void guardarPartidaActual(siguiente).catch(() => {
+          setError("No se pudo guardar el cronometro.");
+        });
+      }
     }, 1000);
 
-    return () => clearInterval(intervalo);
+    return () => {
+      clearInterval(intervalo);
+
+      const actual = partidaRef.current;
+      if (actual && !actual.finalizada) {
+        void guardarPartidaActual(actual).catch(() => undefined);
+      }
+    };
   }, [guardarPartidaActual, partidaFinalizada, partidaId, partidaPausada]);
+
+  useEffect(() => {
+    const suscripcion = AppState.addEventListener("change", (estado) => {
+      const actual = partidaRef.current;
+
+      if (estado === "active" || !actual || actual.pausada || actual.finalizada) {
+        return;
+      }
+
+      const siguiente = {
+        ...actual,
+        actualizadaEl: obtenerHoyIso(),
+        pausada: true,
+      };
+
+      fijarPartida(siguiente);
+      void guardarPartidaActual(siguiente).catch(() => {
+        setError("No se pudo guardar la pausa.");
+      });
+    });
+
+    return () => suscripcion.remove();
+  }, [guardarPartidaActual]);
 
   async function seleccionarCelda(indice: number) {
     await aplicarCambio((actual) => ({
@@ -230,7 +318,7 @@ export function useSudokuJuego({
     await aplicarCambio((actual) => ({
       ...actual,
       pausada: !actual.pausada,
-    }));
+    }), { permitirPausada: true });
   }
 
   async function deshacer() {
@@ -317,13 +405,19 @@ export function useSudokuJuego({
         return actual;
       }
 
+      let siguientesCeldas = actualizarCelda(actual.celdas, indice, {
+        ...celdaActual,
+        notas: [],
+        valor: numero,
+      });
+
+      if (numero === actual.solucion[indice]) {
+        siguientesCeldas = limpiarNotaRelacionada(siguientesCeldas, indice, numero);
+      }
+
       return {
         ...actual,
-        celdas: actualizarCelda(actual.celdas, indice, {
-          ...celdaActual,
-          notas: [],
-          valor: numero,
-        }),
+        celdas: siguientesCeldas,
         historial: limitarHistorialSudoku([
           ...actual.historial,
           crearInstantaneaSudoku(actual.celdas, actual.pistasRestantes, actual.notasActivas),
@@ -353,14 +447,21 @@ export function useSudokuJuego({
 
       const celdaActual = actual.celdas[indiceObjetivo];
 
+      const numeroCorrecto = actual.solucion[indiceObjetivo];
+      const celdasConPista = actualizarCelda(actual.celdas, indiceObjetivo, {
+        ...celdaActual,
+        notas: [],
+        valor: numeroCorrecto,
+      });
+
       return {
         ...actual,
         celdaSeleccionada: indiceObjetivo,
-        celdas: actualizarCelda(actual.celdas, indiceObjetivo, {
-          ...celdaActual,
-          notas: [],
-          valor: actual.solucion[indiceObjetivo],
-        }),
+        celdas: limpiarNotaRelacionada(
+          celdasConPista,
+          indiceObjetivo,
+          numeroCorrecto
+        ),
         historial: limitarHistorialSudoku([
           ...actual.historial,
           crearInstantaneaSudoku(actual.celdas, actual.pistasRestantes, actual.notasActivas),

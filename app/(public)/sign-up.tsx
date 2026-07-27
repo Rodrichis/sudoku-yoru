@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { Link } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import { Pressable, Text } from "react-native";

@@ -60,14 +60,22 @@ export async function asegurarDocumentoUsuarioBase(
   }
 
   const usoActualRef = doc(dbInstancia, "usuarios", user.uid, "uso", "actual");
-  await setDoc(
-    usoActualRef,
-    {
-      actualizadoEl: serverTimestamp(),
-      correosMes: 0,
-      mesReferencia: obtenerClaveMesActual(),
-      notificacionesMes: 0,
-    },
-    { merge: true }
-  );
+  const usoActualSnap = await getDoc(usoActualRef);
+  const mesReferencia = obtenerClaveMesActual();
+
+  if (
+    !usoActualSnap.exists() ||
+    usoActualSnap.data().mesReferencia !== mesReferencia
+  ) {
+    await setDoc(
+      usoActualRef,
+      {
+        actualizadoEl: serverTimestamp(),
+        correosMes: 0,
+        mesReferencia,
+        notificacionesMes: 0,
+      },
+      { merge: true }
+    );
+  }
 }

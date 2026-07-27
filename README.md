@@ -1,14 +1,15 @@
-# RZ Base App
+# Sudoku Yoru
 
-Plantilla base para proyectos `Expo + React Native + TypeScript` con:
+Sudoku clasico 9x9 para `Expo + React Native + TypeScript`, con una experiencia
+sobria, calmada y completamente jugable offline.
 
 - `Expo Router`
-- `Firebase Auth + Firestore`
-- persistencia de sesion
-- `Expo Notifications`
-- `NativeWind`
-- formularios con `React Hook Form + Zod`
-- estructura inspirada en `C:\passio`
+- modo invitado persistente
+- login opcional con `Firebase Auth + Firestore`
+- generador y solver local con solucion unica
+- partida, notas, ajustes y estadisticas en `AsyncStorage`
+- tema claro y oscuro global
+- notificaciones preparadas para development builds
 - documentacion viva en [`contexto-ia`](./contexto-ia)
 
 ## Inicio rapido
@@ -25,17 +26,27 @@ npm install
 copy .env.example .env
 ```
 
-3. Completa las variables de Firebase y, si corresponde:
+3. Completa las variables del proyecto:
 
+- URL HTTPS de politica de privacidad
+- identificador de proyecto EAS
+- Firebase
 - Google login
-- EAS project id para push
-- RevenueCat
-- Mercado Pago
+- RevenueCat y anuncios cuando se activen
 
 4. Ejecuta la app:
 
 ```bash
 npm run start
+```
+
+## Verificacion
+
+```bash
+npm run typecheck
+npm run lint
+npm test
+npx expo-doctor
 ```
 
 ## Estructura
@@ -48,15 +59,15 @@ npm run start
 - `src/features`: validaciones y logica por feature
 - `src/i18n`: textos centralizados
 - `src/providers`: providers operativos
-- `src/services`: Firebase, auth, notificaciones, suscripciones, planes, analytics, RevenueCat, Mercado Pago
+- `src/services`: motor Sudoku, storage, Firebase, auth, notificaciones y servicios opcionales
 - `src/types`: tipos compartidos
 - `src/utils`: helpers
 - `contexto-ia/`: contexto funcional y decisiones de arquitectura
 
-## Notas
+## Publicacion
 
-- La app usa **espanol ASCII** en nombres internos.
-- `Firebase Analytics` queda abstraido y seguro: en esta base solo se activa en `web` con el SDK JS.
-- `RevenueCat` queda como esqueleto no-op para que no rompa apps que aun no lo usan.
-- `Mercado Pago` queda como placeholder de arquitectura para web; no incluye backend ni webhooks.
-- Existe un helper listo para sincronizar la coleccion `planes` de Firestore: [src/services/planes.ts](/c:/rz-base-app/src/services/planes.ts).
+- Define `ios.bundleIdentifier` y `android.package` en `app.json`.
+- Configura `EXPO_PUBLIC_PRIVACY_POLICY_URL` con una URL HTTPS publica.
+- Configura el proyecto EAS y Firebase antes de validar auth, Google y push.
+- Los anuncios, RevenueCat y el desafio diario permanecen fuera del alcance V1 acordado.
+- Usa un development build para probar push remoto; Expo Go no lo soporta.

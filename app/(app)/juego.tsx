@@ -1,6 +1,6 @@
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useMemo } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Pressable, Text, Vibration, View } from "react-native";
 
 import { SudokuAdBanner } from "@/src/components/sudoku/sudoku-ad-banner";
@@ -32,11 +32,12 @@ export default function GameScreen() {
   const { perfilId } = useSesion();
   const { ajustes } = useSudokuAjustes();
   const { reproducirToque, reproducirVictoria } = useSudokuSonidos(ajustes.sonidos);
-  const dificultadInicial = useMemo(
-    () => resolverDificultad(params.dificultad) as SudokuDificultad | null,
-    [params.dificultad]
-  );
-  const forzarNuevaPartida = params.nueva === "1";
+  const [solicitudInicial] = useState(() => ({
+    dificultad: resolverDificultad(params.dificultad) as SudokuDificultad | null,
+    forzarNuevaPartida:
+      (Array.isArray(params.nueva) ? params.nueva[0] : params.nueva) === "1",
+  }));
+  const parametrosLimpiadosRef = useRef(false);
   const {
     alternarNotas,
     alternarPausa,
@@ -56,16 +57,22 @@ export default function GameScreen() {
     usarPista,
   } = useSudokuJuego({
     ajustes,
-    dificultadInicial,
-    forzarNuevaPartida,
+    dificultadInicial: solicitudInicial.dificultad,
+    forzarNuevaPartida: solicitudInicial.forzarNuevaPartida,
     perfilId,
   });
 
   useEffect(() => {
-    if (forzarNuevaPartida) {
+    if (
+      solicitudInicial.forzarNuevaPartida &&
+      !parametrosLimpiadosRef.current &&
+      !cargando &&
+      partida
+    ) {
+      parametrosLimpiadosRef.current = true;
       router.replace("/(app)/juego");
     }
-  }, [forzarNuevaPartida, router]);
+  }, [cargando, partida, router, solicitudInicial.forzarNuevaPartida]);
 
   useEffect(() => {
     if (!completadaReciente) {
@@ -135,7 +142,7 @@ export default function GameScreen() {
   }
 
   return (
-    <SudokuPage scroll={false}>
+    <SudokuPage>
       <View
         className="flex-1 px-5 pt-4"
         style={{ maxWidth: branding.layout.anchoContenido, width: "100%" }}
@@ -193,6 +200,19 @@ export default function GameScreen() {
           <SudokuAdBanner />
         </View>
 
+        {error ? (
+          <Text
+            accessibilityLiveRegion="polite"
+            className="mt-3 text-center text-xs"
+            style={{
+              color: branding.colores.error,
+              fontFamily: branding.tipografia.cuerpoMedio,
+            }}
+          >
+            {error}
+          </Text>
+        ) : null}
+
         <View className="mt-7 items-center">
           <View className="w-full" style={{ maxWidth: 380 }}>
             <SudokuBoard
@@ -212,6 +232,7 @@ export default function GameScreen() {
 
         <View className="mt-7">
           <SudokuToolbar
+            deshabilitado={partida.pausada || partida.finalizada}
             notasActivas={partida.notasActivas}
             onBorrar={() => {
               feedbackLigero();
@@ -236,6 +257,7 @@ export default function GameScreen() {
 
         <View className="mt-6">
           <SudokuNumberPad
+            deshabilitado={partida.pausada || partida.finalizada}
             onPressNumero={(numero) => {
               feedbackLigero();
               void ingresarNumero(numero);

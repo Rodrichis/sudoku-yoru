@@ -67,7 +67,13 @@ export function useSolicitudGoogle() {
 
 export async function iniciarSesionEmail({ email, password }: CredencialesEmail) {
   const authInstancia = obtenerAuth();
-  return signInWithEmailAndPassword(authInstancia, email.trim().toLowerCase(), password);
+  const resultado = await signInWithEmailAndPassword(
+    authInstancia,
+    email.trim().toLowerCase(),
+    password
+  );
+  await asegurarDocumentoUsuarioBase(resultado.user, "password");
+  return resultado;
 }
 
 export async function registrarUsuarioEmail({ email, nombre, password }: RegistroEmail) {

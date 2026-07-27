@@ -1,10 +1,11 @@
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { Pressable, View } from "react-native";
 import { usePathname, useRouter } from "expo-router";
 import type { Href } from "expo-router";
 
 import { branding } from "@/src/config/branding";
 import { useTema } from "@/src/hooks/use-tema";
+import { useTextos } from "@/src/hooks/use-textos";
 
 function esRutaInicio(pathname: string) {
   return pathname === "/" || pathname === "/juego" || pathname === "/nueva-partida";
@@ -14,24 +15,28 @@ export function SudokuBottomNav() {
   const pathname = usePathname();
   const router = useRouter();
   const { colores, modoOscuro } = useTema();
+  const textos = useTextos();
 
   const items = [
     {
       activo: esRutaInicio(pathname),
       icono: "home-outline" as const,
       key: "home",
+      label: textos.sudoku.navegacion.inicio,
       ruta: "/(app)" as Href,
     },
     {
       activo: pathname === "/estadisticas",
       icono: "stats-chart-outline" as const,
       key: "stats",
+      label: textos.sudoku.home.estadisticas,
       ruta: "/(app)/estadisticas" as Href,
     },
     {
       activo: pathname === "/ajustes",
       icono: "settings-outline" as const,
       key: "settings",
+      label: textos.sudoku.home.ajustes,
       ruta: "/(app)/ajustes" as Href,
     },
   ];
@@ -63,6 +68,9 @@ export function SudokuBottomNav() {
       {items.map((item) => (
         <Pressable
           key={item.key}
+          accessibilityLabel={item.label}
+          accessibilityRole="tab"
+          accessibilityState={{ selected: item.activo }}
           hitSlop={10}
           onPress={() => {
             if (!item.activo) {

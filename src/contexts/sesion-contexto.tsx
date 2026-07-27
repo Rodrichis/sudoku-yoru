@@ -78,10 +78,13 @@ export function SesionProvider({ children }: PropsWithChildren) {
         return;
       }
 
-      if (esInvitado) {
-        setEsInvitado(false);
-        void guardarSesionInvitado(false);
-      }
+      setEsInvitado((invitadoActual) => {
+        if (invitadoActual) {
+          void guardarSesionInvitado(false);
+        }
+
+        return false;
+      });
 
       cancelarUsuario = onSnapshot(
         doc(db, "usuarios", siguienteUsuario.uid),
@@ -100,11 +103,11 @@ export function SesionProvider({ children }: PropsWithChildren) {
       cancelarUsuario?.();
       cancelarAuth();
     };
-  }, [esInvitado]);
+  }, []);
 
   async function entrarComoInvitado() {
-    setEsInvitado(true);
     await guardarSesionInvitado(true);
+    setEsInvitado(true);
   }
 
   async function salirSesionActual() {

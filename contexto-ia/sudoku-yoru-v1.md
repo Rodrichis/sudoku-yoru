@@ -35,3 +35,23 @@
 - Modo invitado
 - Sonido basico
 
+## Endurecimiento previo a produccion
+
+- El solver valida tableros parciales y completos antes de resolver o contar soluciones.
+- La generacion usa mascaras de bits y reintentos acotados para respetar los rangos de pistas sin bloquear la interfaz.
+- AsyncStorage serializa operaciones por clave y descarta partidas corruptas de forma segura.
+- Las victorias son idempotentes por id y se reconcilian si una escritura queda incompleta.
+- Las estadisticas diarias usan fecha local en vez de UTC.
+- El juego se pausa y persiste cuando la app pasa a segundo plano.
+- Iniciar otra partida activa requiere confirmacion.
+- Expo SDK 54 queda alineado y `expo-audio` no solicita permiso de microfono.
+- Se agregaron pruebas del solver, generador y estadisticas.
+- `eas.json` define perfiles development, preview y production.
+
+## Bloqueos externos para publicar
+
+- Definir `ios.bundleIdentifier` y `android.package`.
+- Configurar el proyecto EAS y `EXPO_PUBLIC_EAS_PROJECT_ID`.
+- Configurar Firebase y credenciales Google si el login con cuenta entra en la primera publicacion.
+- Publicar una politica de privacidad HTTPS y completar `EXPO_PUBLIC_PRIVACY_POLICY_URL`.
+- Validar en Android fisico o emulador y realizar al menos un development build.

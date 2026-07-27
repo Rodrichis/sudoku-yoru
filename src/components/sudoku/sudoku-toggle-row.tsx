@@ -23,6 +23,8 @@ export function SudokuToggleRow({
 
   return (
     <Pressable
+      accessibilityRole="switch"
+      accessibilityState={{ checked: activo }}
       className="flex-row items-center justify-between px-5 py-4"
       onPress={onPress}
       style={{
