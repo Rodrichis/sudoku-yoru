@@ -185,16 +185,6 @@ export default function StatsScreen() {
           />
         </View>
 
-        <View className="mt-6">
-          <SudokuPanel>
-            <Text
-              className="text-[28px] italic leading-10"
-              style={{ color: branding.colores.textoSecundario, fontFamily: branding.tipografia.tituloMedio }}
-            >
-              {textos.sudoku.stats.quote}
-            </Text>
-          </SudokuPanel>
-        </View>
       </View>
     </SudokuPage>
   );

@@ -38,7 +38,13 @@ function AppShell() {
 
   return (
     <NotificacionesProvider>
-      <Stack screenOptions={{ headerShown: false }} />
+      <Stack
+        screenOptions={{
+          animation: "none",
+          contentStyle: { backgroundColor: colores.fondoApp },
+          headerShown: false,
+        }}
+      />
       <StatusBar style={modoOscuro ? "light" : "dark"} />
     </NotificacionesProvider>
   );
